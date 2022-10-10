@@ -1,0 +1,22 @@
+{
+  "name": "kraigslist-backend",
+  "version": "1.0.0",
+  "description": "Our backend for Kraigslist [CS490]",
+  "main": "index.js",
+  "scripts": {
+    "test": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Computer-Science-Society-kzoo/kraigslist-backend.git"
+  },
+  "author": "Aleksandr Molchagin, Derik Torres, Hanis Sommerville, Shanon Brown, Tabitha Rowland",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Computer-Science-Society-kzoo/kraigslist-backend/issues"
+  },
+  "homepage": "https://github.com/Computer-Science-Society-kzoo/kraigslist-backend#readme",
+  "dependencies": {
+    "mariadb": "^3.0.1"
+  }
+}
