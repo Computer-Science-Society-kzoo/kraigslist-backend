@@ -1,22 +1,16 @@
 {
-  "name": "kraigslist-backend",
+  "name": "express-example",
   "version": "1.0.0",
-  "description": "Our backend for Kraigslist [CS490]",
+  "description": "Express + PlanetScale",
   "main": "index.js",
   "scripts": {
-    "test": "app.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Computer-Science-Society-kzoo/kraigslist-backend.git"
-  },
-  "author": "Aleksandr Molchagin, Derik Torres, Hanis Sommerville, Shanon Brown, Tabitha Rowland",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Computer-Science-Society-kzoo/kraigslist-backend/issues"
-  },
-  "homepage": "https://github.com/Computer-Science-Society-kzoo/kraigslist-backend#readme",
   "dependencies": {
-    "mariadb": "^3.0.1"
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mysql2": "^2.3.3"
   }
 }

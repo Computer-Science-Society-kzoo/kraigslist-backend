@@ -1,19 +1,21 @@
- const mariadb = require( 'mariadb' );
+require('dotenv').config();
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 3000
 
- const pool = mariadb.createPool({
-    host: 'localhost' ,
-    user: 'root' ,
-    password: '1234' ,
-    database: 'nodedb' ,
-});
+const mysql = require('mysql2')
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
-async function main(){
-    try{
-        let conn = await pool.getConnection();
-        let rows = await conn.query( "SELECT * FROM users" );
-        console.log(rows)
+connection.connect()
 
-    } catch (err) {
-        console.log(err);
-    }
-}
+app.get('/', (req, res) => {
+  connection.query('SELECT * FROM users', function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+  })
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
