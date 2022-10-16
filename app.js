@@ -1,7 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({path: './.env'});
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
+
 
 const mysql = require('mysql2')
 const connection = mysql.createConnection(process.env.DATABASE_URL);
@@ -22,3 +23,4 @@ app.get('/getallusers', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
