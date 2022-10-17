@@ -4,31 +4,33 @@ module.exports = (sequelize, Sequelize) =>
         {
         username: 
         {
-            type: Sequelize.VARCHAR
+            type: "varchar(50)",
+            allowNull: false,
         },
         email:
         {
-                type: Sequelize.VARCHAR
+            type: "varchar(50)"
         },
         password:
         {
-                type: Sequelize.VARCHAR
+            type: "varchar(50)"
         },
         first_name:
         {
-                type: Sequelize.VARCHAR
+            type: "varchar(50)"
         },
         last_name:
         {
-            type: Sequelize.VARCHAR
+            type: "varchar(50)"
         },
         preferred_name:
         {
-            type: Sequelize.VARCHAR
+            type: "varchar(50)",
+            allowNull: true,
         },
         year:
         {
-            type: Sequelize.INTEGER
+            type: "tinyint(4)"
         }
     });
     
