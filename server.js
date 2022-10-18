@@ -4,6 +4,15 @@ const { hashSync } = require("bcryptjs");
 
 const app = express();
 
+require('dotenv').config({path: './.env'});
+
+const port = process.env.PORT || 3000
+
+
+const mysql = require('mysql2')
+const connection = mysql.createConnection(process.env.DATABASE_URL);
+connection.connect()
+
 var corsOptions = {
   origin: "http://localhost:3000"
 };
@@ -31,5 +40,21 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+app.get('/getallusers', (req, res) => {
+  connection.query('SELECT * FROM users', function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+  })
+})
+
+app.get('/getallposts', (req, res) => {
+  connection.query('SELECT * FROM posts', function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+  })
+})
 
 //hashSync();

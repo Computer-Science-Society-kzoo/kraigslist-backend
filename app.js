@@ -20,6 +20,14 @@ app.get('/getallusers', (req, res) => {
   })
 })
 
+app.get('/getallposts', (req, res) => {
+  connection.query('SELECT * FROM posts', function (err, rows, fields) {
+    if (err) throw err
+
+    res.send(rows)
+  })
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
