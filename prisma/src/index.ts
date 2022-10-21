@@ -17,6 +17,9 @@ const saltRounds = 10; // The higher the number, the more secure the password
 
 var jwt = require("jsonwebtoken");
 
+var cors = require("cors");
+app.use(cors());
+
 // Start the server
 const server = app.listen(3000, () => {
   const message = `
@@ -36,6 +39,12 @@ app.get("/", async (req, res) => {
 app.get("/users", async (req, res) => {
   const users = await prisma.users.findMany();
   res.json(users);
+});
+
+// Get all Posts in a JSON format
+app.get("/api/posts/all", async (req, res) => {
+  const posts = await prisma.posts.findMany();
+  res.json(posts);
 });
 
 // Get a specific user by their username
@@ -168,13 +177,13 @@ app.post(
             process.env.JWT_SECRET,
             { expiresIn: "12h" }
           );
-          const result = { ...user, token };
+          const result = token;
           res.status(200).json(result);
         } else {
           res.sendStatus(401);
         }
       } else {
-        res.sendStatus(401);
+        res.sendStatus(404);
       }
     } catch (error) {
       console.log("Unknown error:" + error);
