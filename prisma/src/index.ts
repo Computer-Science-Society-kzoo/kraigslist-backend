@@ -21,7 +21,19 @@ var jwt = require("jsonwebtoken");
 // We need to limit the origins (websites) that can make requests to our API
 // https://www.npmjs.com/package/cors
 var cors = require("cors");
-app.use(cors()); // !! SHOULD BE CHANGE TO ONLY ALLOW OUR FRONTEND !!
+var whitelist = ['http://localhost:3000', "http://localhost:3001" /** other domains if any */ ]
+var corsOptions = {
+  credentials: true,
+  origin: function(origin: any, callback: any) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(cors(corsOptions)); // !! SHOULD BE CHANGE TO ONLY ALLOW OUR FRONTEND !!
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
@@ -49,12 +61,12 @@ app.get("/users", async (req, res) => {
 
 // Get all Posts in a JSON format
 app.get("/api/posts/all", async (req, res) => {
+  console.log(req.cookies)
   if (userIsLoggedIn(req.cookies.auth)) {
     const posts = await prisma.posts.findMany();
     res.json(posts);
-  } else {
-    res.status(401).send("Unauthorized")
   }
+  res.status(401)
 });
 
 function userIsLoggedIn(token: string): boolean {
