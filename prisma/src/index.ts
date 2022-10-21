@@ -17,8 +17,14 @@ const saltRounds = 10; // The higher the number, the more secure the password
 
 var jwt = require("jsonwebtoken");
 
+// Cors is a library that let us make cross-origin requests
+// We need to limit the origins (websites) that can make requests to our API
+// https://www.npmjs.com/package/cors
 var cors = require("cors");
-app.use(cors());
+app.use(cors()); // !! SHOULD BE CHANGE TO ONLY ALLOW OUR FRONTEND !!
+
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 // Start the server
 const server = app.listen(3000, () => {
@@ -43,9 +49,25 @@ app.get("/users", async (req, res) => {
 
 // Get all Posts in a JSON format
 app.get("/api/posts/all", async (req, res) => {
-  const posts = await prisma.posts.findMany();
-  res.json(posts);
+  if (userIsLoggedIn(req.cookies.auth)) {
+    const posts = await prisma.posts.findMany();
+    res.json(posts);
+  } else {
+    res.status(401).send("Unauthorized")
+  }
 });
+
+function userIsLoggedIn(token: string): boolean {
+  console.log("Trying to verify token: " + token)
+  try {
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded)
+    return true;
+  } catch(err) {
+    console.log(err)
+  }
+  return false;
+}
 
 // Get a specific user by their username
 // http://localhost:3000/user/username?=aleksandr
