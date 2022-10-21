@@ -28,7 +28,8 @@ var corsOptions = {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
-      callback(new Error('Not allowed by CORS'))
+      callback(null, true)
+      //callback(new Error('Not allowed by CORS'))
     }
   }
 }
@@ -62,7 +63,9 @@ app.get("/users", async (req, res) => {
 // Get all Posts in a JSON format
 app.get("/api/posts/all", async (req, res) => {
   console.log(req.cookies)
-  if (userIsLoggedIn(req.cookies.auth)) {
+  if (req.cookies.auth === undefined) {
+    res.status(401)
+  } else if (userIsLoggedIn(req.cookies.auth)) {
     const posts = await prisma.posts.findMany();
     res.json(posts);
   }
