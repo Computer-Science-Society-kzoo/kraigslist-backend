@@ -10,15 +10,6 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
-// Bcrypt is a library that let us hash passwords before we store them in the database
-// https://www.npmjs.com/package/bcrypt
-const bcrypt = require("bcrypt");
-const saltRounds = 10; // The higher the number, the more secure the password
-
-// JWT is a library that let us create and verify tokens
-// https://www.npmjs.com/package/jsonwebtoken
-var jwt = require("jsonwebtoken");
-
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
