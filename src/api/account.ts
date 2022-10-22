@@ -10,12 +10,22 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
+
 // JWT is a library that let us create and verify tokens
 // https://www.npmjs.com/package/jsonwebtoken
 var jwt = require("jsonwebtoken");
 
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
+/*
+                                             __
+                                            /\ \__
+   __      ___    ___    ___   __  __    ___\ \ ,_\
+ /'__`\   /'___\ /'___\ / __`\/\ \/\ \ /' _ `\ \ \/
+/\ \L\.\_/\ \__//\ \__//\ \L\ \ \ \_\ \/\ \/\ \ \ \_
+\ \__/.\_\ \____\ \____\ \____/\ \____/\ \_\ \_\ \__\
+ \/__/\/_/\/____/\/____/\/___/  \/___/  \/_/\/_/\/__/
+
+
+*/
 
 export const deleteAccount = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
