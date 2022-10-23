@@ -154,7 +154,7 @@ export const login = async (req: { body: { email: string; password: string } }, 
         res.sendStatus(401);
         }
     } else {
-        res.sendStatus(404);
+        res.sendStatus(400);
     }
     } catch (error) {
     console.log("Unknown error:" + error);
