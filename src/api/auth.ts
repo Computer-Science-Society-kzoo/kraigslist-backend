@@ -48,7 +48,6 @@ interface User {
 export const signup =  async (req: { body: User }, res: any) => {
     // Getting the user from the body in a JSON format
     const {
-      username,
       email,
       password,
       first_name,
@@ -57,6 +56,7 @@ export const signup =  async (req: { body: User }, res: any) => {
       year,
     } = req.body;
     // If fields are missing, return an error
+    const username = email.split("@")[0];
     if (!username || !email || !password || !first_name || !last_name || !year) {
       res.sendStatus(400);
       console.log("Missing required fields.");

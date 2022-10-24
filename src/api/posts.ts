@@ -42,7 +42,7 @@ export const getPosts = async (req: any, res: any) => {
 //TRYING OUT POST FUNCTION
 
 interface Post {
-  dt_created: Date; //is it okay that this isnt DateTime? it gets angry when i try to declare it as a DateTime instead
+  dt_created: any; //is it okay that this isnt DateTime? it gets angry when i try to declare it as a DateTime instead ///for "any" now...
   title: string;
   text: string;
   username: string;
@@ -58,10 +58,10 @@ export const createPost = async (req: { body: Post }, res: any) => {
   // Getting the post from the body in a JSON format
   const { dt_created, title, text, username, type, category, img } = req.body;
   // If fields are missing, return an error
-  if (!dt_created || !title || !text || !username || !type || !category) {
+  if ( !title || !text || !username || !type || !category) {
     res.sendStatus(400);
     console.log(
-      "Missing required fields like date, title, text, username, type, or category."
+      "Missing required fields like title, text, username, type, or category."
     );
     return;
   }

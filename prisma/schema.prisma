@@ -7,17 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model posts {
-  id         Int      @id @default(autoincrement())
-  dt_created DateTime @db.DateTime(0)
-  title      String   @db.VarChar(50)
-  text       String   @db.Text
-  username   String   @db.VarChar(50)
-  type       String   @db.VarChar(50)
-  category   String?  @db.VarChar(50)
-  img        Bytes?   @db.Blob
-}
-
 model users {
   id             Int     @id @default(autoincrement())
   username       String  @unique(map: "users_pk") @db.VarChar(50)
@@ -27,4 +16,42 @@ model users {
   preferred_name String? @db.VarChar(50)
   year           Int?    @db.TinyInt
   password       String  @db.VarChar(255)
+  picture_path   Bytes?  @db.Blob
+  country        String? @db.VarChar(50)
+  city           String? @db.VarChar(50)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model messageReply {
+  ReplyID     Int
+  SenderUID   Int
+  ReceiverUID Int
+  MessageID   Int
+  Comment     String    @db.VarChar(500)
+  Date        DateTime? @db.Date
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model messages {
+  MessageID   Int
+  SenderUID   Int
+  ReceiverUID Int
+  PostID      Int
+  Comment     String   @db.VarChar(500)
+  Date        DateTime @db.Date
+
+  @@ignore
+}
+
+model posts {
+  id         Int       @id @default(autoincrement())
+  dt_created DateTime? @default(now()) @db.Timestamp(0)
+  title      String    @db.VarChar(50)
+  text       String    @db.Text
+  username   String    @db.VarChar(50)
+  type       String    @db.VarChar(50)
+  category   String?   @db.VarChar(50)
+  img        Bytes?    @db.Blob
 }
