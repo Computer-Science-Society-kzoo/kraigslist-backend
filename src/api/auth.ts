@@ -124,6 +124,8 @@ export const signup =  async (req: { body: User }, res: any) => {
 // http://localhost:3000/api/auth/login
 // don't forget to attach the JSON body to the request
 
+declare global { var userInfo: any; }
+
 export const login = async (req: { body: { email: string; password: string } }, res: any) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -137,6 +139,7 @@ export const login = async (req: { body: { email: string; password: string } }, 
         email: String(email),
         },
     });
+    globalThis.userInfo = user; //makes user a global variable i think
     if (user) {
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (isPasswordCorrect) {
@@ -173,5 +176,18 @@ export function userIsLoggedIn(token: string): boolean {
       console.log(err);
     }
     return false;
-  }
+}
+
+  //takes token and finds username
+  export function getUsername(req: any, res: string) {
+
+    //const userInfo = await prisma.users.findUnique({
+    try {
+      if (userIsLoggedIn(req.cookies.auth)) {
+      var username = userInfo.username;     
+      return username;} }
+    catch (err) {
+      console.log(err);
+   }
+}
   

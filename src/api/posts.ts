@@ -39,10 +39,9 @@ export const getPosts = async (req: any, res: any) => {
   res.status(401);
 };
 
-//TRYING OUT POST FUNCTION
 
 interface Post {
-  dt_created: any; //is it okay that this isnt DateTime? it gets angry when i try to declare it as a DateTime instead ///for "any" now...
+  dt_created: any; 
   title: string;
   text: string;
   username: string;
@@ -53,7 +52,6 @@ interface Post {
 
 // Create a new post
 // http://localhost:3000/api/auth/makepost
-//***does it need to be "auth"? */
 export const createPost = async (req: { body: Post }, res: any) => {
   // Getting the post from the body in a JSON format
   const { dt_created, title, text, username, type, category, img } = req.body;
@@ -82,5 +80,29 @@ export const createPost = async (req: { body: Post }, res: any) => {
     },
   });
   console.log("New post is created: ", post);
-}; //TRYING OUT POST FUNCTION
+};
 
+//WORKING ON RETURNING POST FOR A SINGLE USERNAME
+
+
+import { getUsername } from "./auth";
+
+
+//type GET
+// http://localhost:3000/api/posts/getMyPosts
+export const getMyPosts = async (req: string, res: any) => {
+  
+  try {
+    const result = await prisma.posts.findMany({
+      where: {
+        username: getUsername.toString(),
+      },
+    });
+    res.json(result); //this means it was successful and returned posts??
+    console.log(res.json(result))
+  } catch (error) {
+    console.log("Unknown error:" + error); //make this more specific 
+    res.sendStatus(500);
+    return;
+  }
+};
