@@ -85,21 +85,23 @@ export const createPost = async (req: { body: Post }, res: any) => {
 //WORKING ON RETURNING POST FOR A SINGLE USERNAME
 
 
-import { getUsername } from "./auth";
+import {  getUserName2 } from "./auth";
 
 
 //type GET
 // http://localhost:3000/api/posts/getMyPosts
 export const getMyPosts = async (req: string, res: any) => {
-  
+  var un = getUserName2();
+  console.log(un);
   try {
     const result = await prisma.posts.findMany({
       where: {
-        username: getUsername.toString(),
+        username: un,
       },
     });
     res.json(result); //this means it was successful and returned posts??
-    console.log(res.json(result))
+    console.log("Posts returned for username: ", result);
+    //console.log(getUsername.toString())
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific 
     res.sendStatus(500);
