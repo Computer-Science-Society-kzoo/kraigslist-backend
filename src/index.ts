@@ -70,7 +70,7 @@ app.get("/user", getUser);
 
 import { getPosts, getMyPosts, createPost } from "./api/posts";
 app.get("/api/posts", getPosts);
-app.post("/api/makepost", createPost);
+app.post("/api/posts/makepost", createPost);
 app.get("/api/posts/YourPosts", getMyPosts);
 
   
