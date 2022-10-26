@@ -2,6 +2,7 @@
 // It automatically generates and maintains the database schema for us.
 // https://www.prisma.io/
 import { Prisma, PrismaClient, users } from "@prisma/client";
+import { Blob } from "buffer";
 const prisma = new PrismaClient();
 
 // Express is a web framework for Node.js that let us build APIs
@@ -50,16 +51,40 @@ interface Post {
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
 }
 
+interface Post2 {
+  title: string;
+  text: string;
+  type: string;
+  category: string;
+  img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
+}
+
+import {  getUserName2 } from "./auth";
+
 // Create a new post
 // http://localhost:3000/api/auth/makepost
-export const createPost = async (req: { body: Post }, res: any) => {
+export const createPost = async (req: { body: Post2 }, res: any) => {
   // Getting the post from the body in a JSON format
-  const { dt_created, title, text, username, type, category, img } = req.body;
+//(assuming you have a ResultSet named RS)
+
+  var usersname = getUserName2();
+  const username = usersname;
+  const dt_created = new Date();
+  const {title, text, type, category, img } = req.body;
+  // const blob:Blob = img;
+  // var blobLength:number = img.byteLength;;  
+  // var blobArray = new Uint8Array(img);
+  //   for (var i = 0; i < blobLength; i++) {
+  //       blobArray[i] = img.getUint8(i);
+  //   }
+
+  console.log(img)
+
   // If fields are missing, return an error
   if ( !title || !text || !username || !type || !category) {
     res.sendStatus(400);
     console.log(
-      "Missing required fields like title, text, username, type, or category."
+      "Missing required fields like title, text, type, or category."
     );
     return;
   }
@@ -83,9 +108,6 @@ export const createPost = async (req: { body: Post }, res: any) => {
 };
 
 //WORKING ON RETURNING POST FOR A SINGLE USERNAME
-
-
-import {  getUserName2 } from "./auth";
 
 
 //type GET
