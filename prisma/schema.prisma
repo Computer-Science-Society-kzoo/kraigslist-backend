@@ -53,5 +53,5 @@ model posts {
   username   String    @db.VarChar(50)
   type       String    @db.VarChar(50)
   category   String?   @db.VarChar(50)
-  img        Bytes?    @db.Blob
+  img        Bytes?    @db.LongBlob
 }
