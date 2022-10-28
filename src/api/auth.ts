@@ -178,6 +178,21 @@ export function userIsLoggedIn(token: string): boolean {
   return false;
 }
 
+
+
+export function verifyTokenAndReturnUser(token: string): any {
+  console.log("Trying to verify token: " + token);
+  try {
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+    return decoded.username;
+  } catch (err) {
+    console.log(err);
+  }
+  return undefined;
+}
+
+
 //takes token and finds username
 // export function getUsername(req: any, res: string) {
 

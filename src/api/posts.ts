@@ -3,6 +3,7 @@
 // https://www.prisma.io/
 import { Prisma, PrismaClient, users } from "@prisma/client";
 import { Blob } from "buffer";
+import e from "express";
 const prisma = new PrismaClient();
 
 // Express is a web framework for Node.js that let us build APIs
@@ -10,7 +11,6 @@ const prisma = new PrismaClient();
 import express from "express";
 const app = express();
 app.use(express.json());
-
 
 /*
 
@@ -40,9 +40,8 @@ export const getPosts = async (req: any, res: any) => {
   res.status(401);
 };
 
-
 interface Post {
-  dt_created: any; 
+  dt_created: any;
   title: string;
   text: string;
   username: string;
@@ -59,56 +58,74 @@ interface Post2 {
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
 }
 
-import {  getUserName2 } from "./auth";
+import { getUserName2 } from "./auth";
+import { verifyTokenAndReturnUser } from "./auth";
 
 // Create a new post
 // http://localhost:3000/api/auth/makepost
-export const createPost = async (req: { body: Post2 }, res: any) => {
+export const createPost = async (
+  req: { headers: any; body: Post2 },
+  res: any
+) => {
   // Getting the post from the body in a JSON format
-//(assuming you have a ResultSet named RS)
-
-  var usersname = getUserName2();
-  const username = usersname;
-  const dt_created = new Date();
-  const {title, text, type, category, img } = req.body;
-  // const blob:Blob = img;
-  // var blobLength:number = img.byteLength;;  
-  // var blobArray = new Uint8Array(img);
-  //   for (var i = 0; i < blobLength; i++) {
-  //       blobArray[i] = img.getUint8(i);
-  //   }
-
-  console.log(img)
-
+  //(assuming you have a ResultSet named RS)
+  //get a token
   // If fields are missing, return an error
-  if ( !title || !text || !username || !type || !category) {
-    res.sendStatus(400);
-    console.log(
-      "Missing required fields like title, text, type, or category."
-    );
+  const token = req.headers["authorization"]?.slice(7);
+  let username = ""
+  try {
+    if (token === undefined) {
+      res.status(401).send("No token provided");
+    }
+    username = await verifyTokenAndReturnUser(token);
+    if (username === undefined) {
+      res.status(401).send("Token is invalid");
+    }
+  } catch (e) {
+    console.log(e);
     return;
   }
-  
-  // Try block is important if we want to avoid crashes and catch errors
-  // If server crashes, we have to restart it manually :/
-  // try { put anything we need to verify first here }
-  //Create a new post in the database
-  const post = await prisma.posts.create({
-    data: {
-      dt_created,
-      title,
-      text,
-      username,
-      type,
-      category,
-      img,
-    },
-  });
-  console.log("New post is created: ", post);
+  const dt_created = new Date();
+  const { title, text, type, category, img } = req.body;
+  if (!title || !text || !username || !type || !category) {
+    res.sendStatus(400);
+    console.log("Missing required fields like title, text, type, or category.");
+    return;
+  } else {
+    try {
+      // const blob:Blob = img;
+      // var blobLength:number = img.byteLength;;
+      // var blobArray = new Uint8Array(img);
+      //   for (var i = 0; i < blobLength; i++) {
+      //       blobArray[i] = img.getUint8(i);
+      //   }
+
+      // Try block is important if we want to avoid crashes and catch errors
+      // If server crashes, we have to restart it manually :/
+      // try { put anything we need to verify first here }
+      //Create a new post in the database
+      const post = await prisma.posts.create({
+        data: {
+          dt_created,
+          title,
+          text,
+          username,
+          type,
+          category,
+          img,
+        },
+      });
+      console.log("New post is created: ", post);
+      res.status(200).send("Post created");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Error creating post");
+      return;
+    }
+  }
 };
 
 //WORKING ON RETURNING POST FOR A SINGLE USERNAME
-
 
 //type GET
 // http://localhost:3000/api/posts/getMyPosts
@@ -125,7 +142,7 @@ export const getMyPosts = async (req: string, res: any) => {
     console.log("Posts returned for username: ", result);
     //console.log(getUsername.toString())
   } catch (error) {
-    console.log("Unknown error:" + error); //make this more specific 
+    console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
   }
