@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
@@ -47,12 +47,15 @@ model messages {
 }
 
 model posts {
-  id         Int       @id @default(autoincrement())
-  dt_created DateTime? @default(now()) @db.Timestamp(0)
-  title      String    @db.VarChar(50)
-  text       String    @db.Text
-  username   String    @db.VarChar(50)
-  type       String    @db.VarChar(50)
-  category   String?   @db.VarChar(50)
-  img        Bytes?    @db.LongBlob
+  id             Int       @id @default(autoincrement())
+  dt_created     DateTime? @default(now()) @db.Timestamp(0)
+  title          String    @db.VarChar(50)
+  text           String    @db.Text
+  username       String    @db.VarChar(50)
+  type           String    @db.VarChar(50)
+  category       String?   @db.VarChar(50)
+  img            Bytes?
+  offer_deadline DateTime? @db.DateTime(0)
+
+  @@fulltext([text, title])
 }
