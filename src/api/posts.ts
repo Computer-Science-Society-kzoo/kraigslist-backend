@@ -130,3 +130,18 @@ export const getMyPosts = async (req: string, res: any) => {
     return;
   }
 };
+
+//Tabitha's work in progress for search bar
+// export const searchPosts = async (toSearch: string, res: any) => {
+  
+
+export const searchPosts = async (req: string, res: any) => {
+// All drafts that contain the words 'cat' and 'dog'.
+const result = await prisma.posts.findMany({
+  where: {
+    text: {
+      search: '+cat +dog',
+    },
+  },
+})
+};
