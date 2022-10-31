@@ -28,14 +28,20 @@ app.use(express.json());
 
 import { userIsLoggedIn } from "./auth";
 
-// Get all Posts in a JSON format
+// Get all Posts in a JSON format by most recent
 export const getPosts = async (req: any, res: any) => {
-  console.log(req.cookies);
-  if (req.cookies.auth === undefined) {
-    res.status(401);
+  console.log(req.cookies); 
+  if (req.cookies.auth === undefined) { 
+    res.status(401); 
   } else if (userIsLoggedIn(req.cookies.auth)) {
-    const posts = await prisma.posts.findMany();
-    res.json(posts);
+    const posts = await prisma.posts.findMany({
+      orderBy: [
+        {
+          dt_created: 'desc',
+        },
+      ],}
+    ); 
+    res.json(posts); 
   }
   res.status(401);
 };
@@ -154,7 +160,6 @@ export const getMyPosts = async (req: string, res: any) => {
   }
 };
 
-//Tabitha's work in progress for search bar
 
 //type GET
 export const searchPosts = async (toSearch: string, res: any) => {
@@ -176,3 +181,40 @@ try {
     return;
 } 
 };
+
+
+//make a request to find posts with a specific category
+//type GET
+export const searchPostsByCategory = async (category: string, res: any) => {
+try { 
+    const result = await prisma.posts.findMany({
+        where: {
+            category: category
+        }
+    });
+    res.json(result); //this means it was successful and returned posts
+    console.log("Posts returned for category: ", result);
+} catch (error) {
+    console.log("Unknown error:" + error); //make this more specific
+    res.sendStatus(500);
+    return;
+} 
+}
+
+//make a request to find posts with a specific type
+//type GET
+export const searchPostsByType = async (type: string, res: any) => {
+try { 
+    const result = await prisma.posts.findMany({
+        where: {
+            type: type
+        }
+    });
+    res.json(result); //this means it was successful and returned posts
+    console.log("Posts returned for type: ", result);
+} catch (error) {
+    console.log("Unknown error:" + error); //make this more specific
+    res.sendStatus(500);
+    return;
+} 
+}
