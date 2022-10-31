@@ -61,6 +61,8 @@ interface Post2 {
   text: string;
   type: string;
   category: string;
+  offer_deadline: any;
+  price: number;
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
 }
 
@@ -97,7 +99,7 @@ export const createPost = async (
     return;
   }
   const dt_created = new Date();
-  const { title, text, type, category, img } = req.body;
+  const { title, text, type, category, offer_deadline, price, img } = req.body;
   if (!title || !text || !username || !type || !category) {
     res.sendStatus(400);
     console.log("Missing required fields like title, text, type, or category.");
@@ -123,6 +125,8 @@ export const createPost = async (
           username,
           type,
           category,
+          offer_deadline,
+          price,
           img,
           userID
         },
