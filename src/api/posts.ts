@@ -176,3 +176,10 @@ try {
     return;
 } 
 };
+ 
+//Shanon's work in progress for deleting posts if:
+// user is authentic [is logged in] + is the same user who created the post
+// first: check to see if the user is authenticated ...
+// ALSO: you can't delete a post if it's not created
+// LOOK AT: CreatePost function for reference
+
