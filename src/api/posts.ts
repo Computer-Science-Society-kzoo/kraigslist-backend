@@ -160,10 +160,9 @@ export const getMyPosts = async (req: string, res: any) => {
   }
 };
 
-
+//make a request to find posts with either a title or text that contains the search term
 //type GET
 export const searchPosts = async (toSearch: string, res: any) => {
-//make a request to find posts with either a title or text that contains the search term
 try { 
     const result = await prisma.posts.findMany({
         where: {
@@ -183,7 +182,8 @@ try {
 };
 
 
-//make a request to find posts with a specific category
+//make a request to find posts with a specific category, can take any string so front end will need
+//to make sure the user can only choose form a list of categories
 //type GET
 export const searchPostsByCategory = async (category: string, res: any) => {
 try { 
@@ -201,9 +201,10 @@ try {
 } 
 }
 
-//make a request to find posts with a specific type
+//make a request to find posts with a specific type. right now i have it accepting any string, so front end will
+//have to make sure they are limiting the user to only selecting "request" or "offer"
 //type GET
-export const searchPostsByType = async (type: string, res: any) => {
+export const getPostsByType = async (type: string, res: any) => {
 try { 
     const result = await prisma.posts.findMany({
         where: {
@@ -217,4 +218,40 @@ try {
     res.sendStatus(500);
     return;
 } 
+}
+
+//make a request to organize posts by expiration date. i dont think that the filters can stack right now just fyi
+//type GET
+export const getPostsByDeadline = async (res: any) => {
+try { 
+    const result = await prisma.posts.findMany({
+        orderBy: {
+            offer_deadline: 'asc'
+        }
+    });
+    res.json(result); //this means it was successful and returned posts
+    console.log("Posts returned by oldest deadline first: ", result);
+} catch (error) {
+    console.log("Unknown error:" + error); //make this more specific
+    res.sendStatus(500);
+    return;
+} 
+}
+
+//make a request to organize posts by price (lowest to highest)
+//type GET
+export const getPostsByPrice = async (res: any) => {
+try { 
+    const result = await prisma.posts.findMany({
+        orderBy: {
+            price: 'asc'
+        }
+    });
+    res.json(result); //this means it was successful and returned posts
+    console.log("Posts returned by lowest price first: ", result);
+} catch (error) {
+    console.log("Unknown error:" + error); //make this more specific
+    res.sendStatus(500);
+    return;
+}
 }
