@@ -8,42 +8,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id             Int     @id @default(autoincrement())
-  username       String  @unique(map: "users_pk") @db.VarChar(50)
-  email          String  @unique(map: "users_pk_email") @db.VarChar(50)
-  first_name     String  @db.VarChar(50)
-  last_name      String  @db.VarChar(50)
-  preferred_name String? @db.VarChar(50)
-  year           Int?    @db.TinyInt
-  password       String  @db.VarChar(255)
-  picture_path   Bytes?  @db.Blob
-  country        String? @db.VarChar(50)
-  city           String? @db.VarChar(50)
+model conversations {
+  conversationID Int       @id @default(autoincrement())
+  senderUID      Int?
+  receiverUID    Int?
+  postID         Int?
+  lastMessage    String?   @db.Text
+  lastSenderID   Int
+  date           DateTime? @default(now()) @db.Timestamp(0)
+  newMessages    Int?      @default(0)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model messageReply {
-  ReplyID     Int
-  SenderUID   Int
-  ReceiverUID Int
-  MessageID   Int
-  Comment     String    @db.VarChar(500)
-  Date        DateTime? @db.Date
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model messages {
-  MessageID   Int
-  SenderUID   Int
-  ReceiverUID Int
-  PostID      Int
-  Comment     String   @db.VarChar(500)
-  Date        DateTime @db.Date
-
-  @@ignore
+  messageID   Int      @id @default(autoincrement())
+  senderUID   Int
+  receiverUID Int
+  message     String?  @db.Text
+  date        DateTime @default(now()) @db.Timestamp(0)
 }
 
 model posts {
@@ -56,6 +37,19 @@ model posts {
   category       String?   @db.VarChar(50)
   img            Bytes?
   offer_deadline DateTime? @db.DateTime(0)
+  userID         Int
+}
 
-  @@fulltext([text, title])
+model users {
+  id             Int     @id @default(autoincrement())
+  username       String  @unique(map: "users_pk") @db.VarChar(50)
+  email          String  @unique(map: "users_pk_email") @db.VarChar(50)
+  first_name     String  @db.VarChar(50)
+  last_name      String  @db.VarChar(50)
+  preferred_name String? @db.VarChar(50)
+  year           Int?    @db.TinyInt
+  password       String  @db.VarChar(255)
+  picture_path   Bytes?  @db.Blob
+  country        String? @db.VarChar(50)
+  city           String? @db.VarChar(50)
 }

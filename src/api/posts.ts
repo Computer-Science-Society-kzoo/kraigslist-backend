@@ -59,7 +59,7 @@ interface Post2 {
 }
 
 import { getUserName2 } from "./auth";
-import { verifyTokenAndReturnUser } from "./auth";
+import { verifyTokenAndReturnAccount } from "./auth";
 
 // Create a new post
 // http://localhost:3000/api/auth/makepost
@@ -73,14 +73,19 @@ export const createPost = async (
   // If fields are missing, return an error
   const token = req.headers["authorization"]?.slice(7);
   let username = ""
+  let userID = -1;
   try {
     if (token === undefined) {
       res.status(401).send("No token provided");
     }
-    username = await verifyTokenAndReturnUser(token);
-    if (username === undefined) {
+    let account = await verifyTokenAndReturnAccount(token);
+    if (account === undefined) {
       res.status(401).send("Token is invalid");
     }
+
+    username = account.username;
+    userID = account.id;
+
   } catch (e) {
     console.log(e);
     return;
@@ -113,6 +118,7 @@ export const createPost = async (
           type,
           category,
           img,
+          userID
         },
       });
       console.log("New post is created: ", post);

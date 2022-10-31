@@ -73,4 +73,10 @@ app.get("/api/posts", getPosts);
 app.post("/api/posts/makepost", createPost);
 app.get("/api/posts/YourPosts", getMyPosts);
 
+import { getAllConversations, createConversation, getAllMessages, sendMessage} from "./api/messages";
+app.get("/api/messages/allconversations", getAllConversations);
+app.post("/api/messages/newconversation", createConversation);
+app.get("/api/messages/allmessages", getAllMessages);
+app.post("/api/messages/send", sendMessage);
+
   

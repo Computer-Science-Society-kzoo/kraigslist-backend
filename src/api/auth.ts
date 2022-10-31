@@ -86,6 +86,7 @@ export const signup = async (req: { body: User }, res: any) => {
       {
         username: user.username,
         email: user.email,
+        id: user.id,
       },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
@@ -147,6 +148,7 @@ export const login = async (req: { body: { email: string; password: string } }, 
           {
             username: user.username,
             email: user.email,
+            id: user.id,
           },
           process.env.JWT_SECRET,
           { expiresIn: "12h" }
@@ -186,6 +188,18 @@ export function verifyTokenAndReturnUser(token: string): any {
     var decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log(decoded);
     return decoded.username;
+  } catch (err) {
+    console.log(err);
+  }
+  return undefined;
+}
+
+export function verifyTokenAndReturnAccount(token: string): any {
+  console.log("Trying to verify token: " + token);
+  try {
+    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+    return decoded;
   } catch (err) {
     console.log(err);
   }
