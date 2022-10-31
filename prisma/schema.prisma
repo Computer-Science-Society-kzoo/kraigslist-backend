@@ -35,10 +35,10 @@ model posts {
   username       String    @db.VarChar(50)
   type           String    @db.VarChar(50)
   category       String?   @db.VarChar(50)
-  img            Bytes?
+  img            Bytes?    @db.Blob
   offer_deadline DateTime? @db.DateTime(0)
-  userID         Int
-  price          Int?
+  userID         Int  
+  price          Int?      @db.Int
 }
 
 model users {
