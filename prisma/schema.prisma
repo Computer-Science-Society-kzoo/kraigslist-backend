@@ -38,6 +38,7 @@ model posts {
   img            Bytes?
   offer_deadline DateTime? @db.DateTime(0)
   userID         Int
+  price          Int?
 }
 
 model users {
