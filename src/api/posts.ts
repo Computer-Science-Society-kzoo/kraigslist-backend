@@ -28,14 +28,20 @@ app.use(express.json());
 
 import { userIsLoggedIn } from "./auth";
 
-// Get all Posts in a JSON format
+// Get all Posts in a JSON format by most recent
 export const getPosts = async (req: any, res: any) => {
-  console.log(req.cookies);
-  if (req.cookies.auth === undefined) {
-    res.status(401);
+  console.log(req.cookies); 
+  if (req.cookies.auth === undefined) { 
+    res.status(401); 
   } else if (userIsLoggedIn(req.cookies.auth)) {
-    const posts = await prisma.posts.findMany();
-    res.json(posts);
+    const posts = await prisma.posts.findMany({
+      orderBy: [
+        {
+          dt_created: 'desc',
+        },
+      ],}
+    ); 
+    res.json(posts); 
   }
   res.status(401);
 };
@@ -55,6 +61,8 @@ interface Post2 {
   text: string;
   type: string;
   category: string;
+  offer_deadline: any;
+  price: number;
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
 }
 
@@ -91,7 +99,7 @@ export const createPost = async (
     return;
   }
   const dt_created = new Date();
-  const { title, text, type, category, img } = req.body;
+  const { title, text, type, category, offer_deadline, price, img } = req.body;
   if (!title || !text || !username || !type || !category) {
     res.sendStatus(400);
     console.log("Missing required fields like title, text, type, or category.");
@@ -117,6 +125,8 @@ export const createPost = async (
           username,
           type,
           category,
+          offer_deadline,
+          price,
           img,
           userID
         },
@@ -154,11 +164,9 @@ export const getMyPosts = async (req: string, res: any) => {
   }
 };
 
-//Tabitha's work in progress for search bar
-
+//make a request to find posts with either a title or text that contains the search term
 //type GET
 export const searchPosts = async (toSearch: string, res: any) => {
-//make a request to find posts with either a title or text that contains the search term
 try { 
     const result = await prisma.posts.findMany({
         where: {
@@ -176,10 +184,3 @@ try {
     return;
 } 
 };
- 
-//Shanon's work in progress for deleting posts if:
-// user is authentic [is logged in] + is the same user who created the post
-// first: check to see if the user is authenticated ...
-// ALSO: you can't delete a post if it's not created
-// LOOK AT: CreatePost function for reference
-
