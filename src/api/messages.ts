@@ -221,7 +221,7 @@ export const getAllConversations = async (req: any, res: any) => {
           id: comradeID || 0,
         },  
       });
-      let item = {...conversations[i], name: comrade?.username};
+      let item = {...conversations[i], name: comrade?.username, comID: comrade?.id};
       sendData.push(item);
     }
     
@@ -236,11 +236,12 @@ export const getAllConversations = async (req: any, res: any) => {
 
 export const getAllMessages = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
+  const receiverID = Number.parseInt(req.headers["comradeid"])
   let username = "";
   let userID = -1;
-  let { receiverID } = req.body;
 
   if (!Number.isInteger(receiverID)) {
+    console.log("Invalid receiverID: " + typeof(receiverID) + " " + receiverID);
     return res.status(400).send({ message: "Invalid receiverID" });
   }
 
@@ -266,15 +267,28 @@ export const getAllMessages = async (req: any, res: any) => {
 
   try {
     //get messages by userid and sort them by date
-
     const messages = await prisma.messages.findMany({
       where: {
-        AND: [
+        OR: [
           {
-            senderUID: userID,
+            AND: [
+              {
+                senderUID: userID,
+              },
+              {
+                receiverUID: receiverID,
+              },
+            ],
           },
           {
-            receiverUID: receiverID,
+            AND: [
+              {
+                senderUID: receiverID,
+              },
+              {
+                receiverUID: userID,
+              },
+            ],
           },
         ],
       },
