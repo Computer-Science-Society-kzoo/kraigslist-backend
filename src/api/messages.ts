@@ -207,8 +207,26 @@ export const getAllConversations = async (req: any, res: any) => {
         ],
       },
     });
+
+    let sendData = [];
+    //get username from userID
+    for (let i = 0; i < conversations.length; i++) {
+
+      let comradeID = conversations[i].senderUID;
+      if (comradeID === userID) {
+        comradeID = conversations[i].receiverUID;
+      }
+      const comrade = await prisma.users.findUnique({
+        where: {
+          id: comradeID || 0,
+        },  
+      });
+      let item = {...conversations[i], name: comrade?.username};
+      sendData.push(item);
+    }
+    
     //console.log("Sending the list of conversations ", conversations);
-    res.status(200).json(conversations);
+    res.status(200).json(sendData);
   } catch (error) {
     console.log(error);
     res.status(500).send("Error retrieving conversations");
