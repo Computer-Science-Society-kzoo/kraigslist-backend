@@ -293,7 +293,7 @@ export const getAllMessages = async (req: any, res: any) => {
         ],
       },
       orderBy: {
-        date: "asc",
+        date: "desc",
       },
     });
 
