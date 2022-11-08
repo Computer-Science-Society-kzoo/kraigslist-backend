@@ -168,41 +168,13 @@ export const getMyPosts = async (req: string, res: any) => {
   }
 };
 
-// //make a request to find posts with either a title or text that contains the search term
-// //type GET
-// // http://localhost:3000/api/posts/searchPosts
-// export const searchPosts = async (toSearch: string, res: any) => {
-// try { 
-//     const result = await prisma.posts.findMany({
-//         where: {
-//             OR: [ 
-//                 {title: {contains: toSearch}},
-//                 {text: {contains: toSearch}}  
-//             ]
-//         }
-//     });
-//     res.json(result); //this means it was successful and returned posts
-//     console.log("Posts returned for search term: ", result);
-// } catch (error) {
-//     console.log("Unknown error:" + error); //make this more specific
-//     res.sendStatus(500);
-//     return;
-// } 
-// };
 
 //make a request to find posts with either a title or text that contains the search term
 //type GET
 // http://localhost:3000/api/posts/searchPosts
-// export const createPost = async (
-//   req: { headers: any; body: Post2 },
-//   res: any
-// ) => {
 export const searchPosts = async (req:any,  res: any) => {
 try { 
     let toSearch = req.query.text;
-    //const toSearch = req.;
-    console.log(toSearch);
-    console.log("searching for: ", toSearch);
     const result = await prisma.posts.findMany({
         where: {
             OR: [ 
