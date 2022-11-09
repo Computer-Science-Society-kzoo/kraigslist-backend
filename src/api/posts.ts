@@ -53,7 +53,6 @@ interface Post {
   text: string;
   username: string;
   type: string;
-  category: string;
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
 }
 
@@ -61,7 +60,6 @@ interface Post2 {
   title: string;
   text: string;
   type: string;
-  category: string;
   offer_deadline: any;
   price: number;
   img: any; // "any" might be the wrong move here, but byte or any version of that didnt seem to work.
@@ -104,10 +102,10 @@ export const createPost = async (
     return;
   }
   const dt_created = new Date();
-  const { title, text, type, category, offer_deadline, price, img } = req.body;
-  if (!title || !text || !username || !type || !category) {
+  const { title, text, type, offer_deadline, price, img } = req.body;
+  if (!title || !text || !username || !type ) {
     res.sendStatus(400);
-    console.log("Missing required fields like title, text, type, or category.");
+    console.log("Missing required fields like title, text, or type.");
     return;
   } else {
     try {
@@ -129,7 +127,6 @@ export const createPost = async (
           text,
           username,
           type,
-          category,
           offer_deadline,
           price,
           img,
@@ -259,24 +256,6 @@ export const getPostsMaster = async (req: any, res: any) => {
 };
 
 
-//make a request to find posts with a specific category, can take any string so front end will need
-//to make sure the user can only choose form a list of categories
-//type GET
-export const searchPostsByCategory = async (category: string, res: any) => {
-  try {
-    const result = await prisma.posts.findMany({
-      where: {
-        category: category
-      }
-    });
-    res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned for category: ", result);
-  } catch (error) {
-    console.log("Unknown error:" + error); //make this more specific
-    res.sendStatus(500);
-    return;
-  }
-}
 
 //make a request to find posts with a specific type. right now i have it accepting any string, so front end will
 //have to make sure they are limiting the user to only selecting "request" or "offer"
