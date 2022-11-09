@@ -30,18 +30,19 @@ import { userIsLoggedIn } from "./auth";
 
 // Get all Posts in a JSON format by most recent
 export const getPosts = async (req: any, res: any) => {
-  console.log(req.cookies); 
-  if (req.cookies.auth === undefined) { 
-    res.status(401); 
+  console.log(req.cookies);
+  if (req.cookies.auth === undefined) {
+    res.status(401);
   } else if (userIsLoggedIn(req.cookies.auth)) {
     const posts = await prisma.posts.findMany({
       orderBy: [
         {
           dt_created: 'desc',
         },
-      ],}
-    ); 
-    res.json(posts); 
+      ],
+    }
+    );
+    res.json(posts);
   }
   res.status(401);
 };
@@ -172,24 +173,89 @@ export const getMyPosts = async (req: string, res: any) => {
 //make a request to find posts with either a title or text that contains the search term
 //type GET
 // http://localhost:3000/api/posts/searchPosts
-export const searchPosts = async (req:any,  res: any) => {
-try { 
+export const searchPosts = async (req: any, res: any) => {
+  try {
     let toSearch = req.query.text;
     const result = await prisma.posts.findMany({
-        where: {
-            OR: [ 
-                {title: {contains: toSearch}},
-                {text: {contains: toSearch}}  
-            ]
-        }
+      where: {
+        OR: [
+          { title: { contains: toSearch } },
+          { text: { contains: toSearch } }
+        ]
+      }
     });
     res.json(result); //this means it was successful and returned posts
     console.log("Posts returned for search term: ", result);
-} catch (error) {
+  } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
-} 
+  }
+};
+
+//type GET
+// http://localhost:3000/api/posts/getPostsMaster
+export const getPostsMaster = async (req: any, res: any) => {
+  try {
+    let toSearch = req.query.text;
+    let filter = req.query.filter;
+    console.log("filter: " + filter);
+    console.log("toSearch: " + toSearch);
+    if (toSearch != "" && filter != "") { 
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            { type: { contains: filter } }
+          ]
+        }
+      });
+      res.json(result); //this means it was successful and returned posts
+      console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch != "" && filter == "") {
+    const result = await prisma.posts.findMany({
+      where: {
+        OR: [
+          { title: { contains: toSearch } },
+          { text: { contains: toSearch } }
+        ]
+      }
+    });
+    res.json(result); //this means it was successful and returned posts
+    console.log("Posts returned for search term: ", result);}
+    else if (toSearch == "" && filter != "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          AND: [
+            { type: { contains: filter } }
+          ]
+        }
+      });
+      res.json(result); //this means it was successful and returned posts
+      console.log("Posts returned for search term: ", result);
+    }
+    else{
+      const result = await prisma.posts.findMany({
+        orderBy: [
+          {
+            dt_created: 'desc',
+          },
+        ],
+      }
+      );
+      res.json(result);
+      console.log("Posts returned for search term: ", result);
+    }
+
+  } catch (error) {
+    console.log("Unknown error:" + error); //make this more specific
+    res.sendStatus(500);
+    return;
+  }
 };
 
 
@@ -197,72 +263,72 @@ try {
 //to make sure the user can only choose form a list of categories
 //type GET
 export const searchPostsByCategory = async (category: string, res: any) => {
-try { 
+  try {
     const result = await prisma.posts.findMany({
-        where: {
-            category: category
-        }
+      where: {
+        category: category
+      }
     });
     res.json(result); //this means it was successful and returned posts
     console.log("Posts returned for category: ", result);
-} catch (error) {
+  } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
-} 
+  }
 }
 
 //make a request to find posts with a specific type. right now i have it accepting any string, so front end will
 //have to make sure they are limiting the user to only selecting "request" or "offer"
 //type GET
 export const getPostsByType = async (type: string, res: any) => {
-try { 
+  try {
     const result = await prisma.posts.findMany({
-        where: {
-            type: type
-        }
+      where: {
+        type: type
+      }
     });
     res.json(result); //this means it was successful and returned posts
     console.log("Posts returned for type: ", result);
-} catch (error) {
+  } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
-} 
+  }
 }
 
 //make a request to organize posts by expiration date. i dont think that the filters can stack right now just fyi
 //type GET
 export const getPostsByDeadline = async (res: any) => {
-try { 
+  try {
     const result = await prisma.posts.findMany({
-        orderBy: {
-            offer_deadline: 'asc'
-        }
+      orderBy: {
+        offer_deadline: 'asc'
+      }
     });
     res.json(result); //this means it was successful and returned posts
     console.log("Posts returned by oldest deadline first: ", result);
-} catch (error) {
+  } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
-} 
+  }
 }
 
 //make a request to organize posts by price (lowest to highest)
 //type GET
 export const getPostsByPrice = async (res: any) => {
-try { 
+  try {
     const result = await prisma.posts.findMany({
-        orderBy: {
-            price: 'asc'
-        }
+      orderBy: {
+        price: 'asc'
+      }
     });
     res.json(result); //this means it was successful and returned posts
     console.log("Posts returned by lowest price first: ", result);
-} catch (error) {
+  } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
     return;
-}
+  }
 }

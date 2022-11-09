@@ -68,8 +68,9 @@ import { getUsers, getUser } from "./api/users";
 app.get("/users", getUsers);
 app.get("/user", getUser);
 
-import { getPosts, getMyPosts, createPost, searchPosts } from "./api/posts";
+import { getPosts, getMyPosts, createPost, searchPosts, getPostsMaster } from "./api/posts";
 app.get("/api/posts", getPosts);
+app.get("/api/posts/master", getPostsMaster);
 app.post("/api/posts/makepost", createPost);
 app.get("/api/posts/YourPosts", getMyPosts);
 app.get("/api/posts/searchPosts", searchPosts);
