@@ -103,7 +103,7 @@ export const createPost = async (
   }
   const dt_created = new Date();
   const { title, text, type, offer_deadline, price, img } = req.body;
-  if (!title || !text || !username || !type ) {
+  if (!title || !text || !username || !type) {
     res.sendStatus(400);
     console.log("Missing required fields like title, text, or type.");
     return;
@@ -198,32 +198,57 @@ export const getPostsMaster = async (req: any, res: any) => {
     let filter = req.query.filter;
     console.log("filter: " + filter);
     console.log("toSearch: " + toSearch);
-    if (toSearch != "" && filter != "") { 
+    if (toSearch != "" && filter != "") { //need to add if filter is offer_deadline: asc/desc 
+      if (filter == "price:asc" || filter == "price:desc") {
+        //get variable with only "asc" or "dec" depending on filter to use for query
+        let priceFilter = filter.slice(6);
+        console.log("the order of prices to be shown is: " + priceFilter);
+        const result = await prisma.posts.findMany({
+          where: {
+            OR: [
+              { title: { contains: toSearch } },
+              { text: { contains: toSearch } }
+            ]
+          },
+          orderBy: [
+            {
+              price: priceFilter, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+
+            },
+          ],
+        })
+        res.json(result); //this means it was successful and returned posts with normal search and price:asc
+        console.log("Posts returned for search term: ", result);
+      }
+      else {
+        const result = await prisma.posts.findMany({
+          where: {
+            OR: [
+              { title: { contains: toSearch } },
+              { text: { contains: toSearch } }
+            ],
+            AND: [
+              { type: { contains: filter } }
+            ]
+          }
+        })
+        res.json(result); //this means it was successful and returned posts with normal search & filter
+        console.log("Posts returned for search term: ", result);
+      };
+
+    }
+    else if (toSearch != "" && filter == "") {
       const result = await prisma.posts.findMany({
         where: {
           OR: [
             { title: { contains: toSearch } },
             { text: { contains: toSearch } }
-          ],
-          AND: [
-            { type: { contains: filter } }
           ]
         }
       });
       res.json(result); //this means it was successful and returned posts
       console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch != "" && filter == "") {
-    const result = await prisma.posts.findMany({
-      where: {
-        OR: [
-          { title: { contains: toSearch } },
-          { text: { contains: toSearch } }
-        ]
-      }
-    });
-    res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned for search term: ", result);}
     else if (toSearch == "" && filter != "") {
       const result = await prisma.posts.findMany({
         where: {
@@ -235,7 +260,7 @@ export const getPostsMaster = async (req: any, res: any) => {
       res.json(result); //this means it was successful and returned posts
       console.log("Posts returned for search term: ", result);
     }
-    else{
+    else {
       const result = await prisma.posts.findMany({
         orderBy: [
           {
