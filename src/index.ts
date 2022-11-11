@@ -121,7 +121,7 @@ wsServer.on('request', function(request: any) {
 
   console.log(request.httpRequest.headers.cookie);let token = request.httpRequest.headers.authorization?.split(' ')[1];
   if (token == undefined) {
-      token = request.httpRequest.headers.cookie?.split('auth=')[1];
+      token = request.httpRequest.headers.cookie?.split('auth=')[1].split(";")[0];
   }
 
   if (token == undefined) {
@@ -137,6 +137,7 @@ wsServer.on('request', function(request: any) {
     // You can rewrite this part of the code to accept only the requests from allowed origin
     connection = request.accept(null, request.origin);
     clients[userID] = connection;
+    console.log(token)
     console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients) + " with token: " + token);
   } catch (error) {
     console.log(error);
