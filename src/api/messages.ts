@@ -22,6 +22,7 @@ app.use(express.json());
                                                \_/__/
 */
 
+import { wsServer } from "../index";
 import { verifyTokenAndReturnAccount } from "./auth";
 
 export const createConversation = async (req: any, res: any) => {
@@ -86,7 +87,11 @@ export const createConversation = async (req: any, res: any) => {
       },
     });
 
+    // Send notification to the other user
+    sendNewMessageNotification(post.userID, newConvesation.conversationID, message);
+  
     res.status(200).json({ "Succesfully send?": true, message });
+
   } catch (error) {
     console.log(error);
     res.status(500).send("Error retrieving conversations");
@@ -161,6 +166,9 @@ export const sendMessage = async (req: any, res: any) => {
         newMessages: (conversation.newMessages || 0) + 1,
       },
     });
+
+    sendNewMessageNotification(receiver || 0, conversationID, message);
+  
 
     res.status(200).json({ "Succesfully send and updated?": true, message });
   } catch (error) {
@@ -363,3 +371,19 @@ export const seeAllMessages = async (req: any, res: any) => {
     return;
   }
 };
+
+
+// Send a message to a user
+function sendNewMessageNotification(userID: number, conversationID: number , message: string) {
+  try {
+    wsServer.SendToUser(userID, JSON.stringify({
+      type: "newMessage",
+      data: {
+        conversationID: conversationID,
+        message: message,
+      },
+    }));
+  } catch (e) {
+    console.log(e);
+  }
+}

@@ -157,7 +157,7 @@ export const getMyPosts = async (req: string, res: any) => {
       },
     });
     res.json(result); //this means it was successful and returned posts??
-    console.log("Posts returned for username: ", result);
+    //console.log("Posts returned for username: ", result);
     //console.log(getUsername.toString())
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
@@ -182,7 +182,7 @@ export const searchPosts = async (req: any, res: any) => {
       }
     });
     res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned for search term: ", result);
+    //console.log("Posts returned for search term: ", result);
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
@@ -233,7 +233,7 @@ export const getPostsMaster = async (req: any, res: any) => {
           }
         })
         res.json(result); //this means it was successful and returned posts with normal search & filter
-        console.log("Posts returned for search term: ", result);
+        //console.log("Posts returned for search term: ", result);
       };
 
     }
@@ -247,7 +247,7 @@ export const getPostsMaster = async (req: any, res: any) => {
         }
       });
       res.json(result); //this means it was successful and returned posts
-      console.log("Posts returned for search term: ", result);
+      //console.log("Posts returned for search term: ", result);
     }
     else if (toSearch == "" && filter != "") {
       const result = await prisma.posts.findMany({
@@ -258,7 +258,7 @@ export const getPostsMaster = async (req: any, res: any) => {
         }
       });
       res.json(result); //this means it was successful and returned posts
-      console.log("Posts returned for search term: ", result);
+      //console.log("Posts returned for search term: ", result);
     }
     else {
       const result = await prisma.posts.findMany({
@@ -270,7 +270,7 @@ export const getPostsMaster = async (req: any, res: any) => {
       }
       );
       res.json(result);
-      console.log("Posts returned for search term: ", result);
+      //console.log("Posts returned for search term: ", result);
     }
 
   } catch (error) {
@@ -293,7 +293,7 @@ export const getPostsByType = async (type: string, res: any) => {
       }
     });
     res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned for type: ", result);
+    //console.log("Posts returned for type: ", result);
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
@@ -311,7 +311,7 @@ export const getPostsByDeadline = async (res: any) => {
       }
     });
     res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned by oldest deadline first: ", result);
+    //console.log("Posts returned by oldest deadline first: ", result);
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
@@ -329,7 +329,7 @@ export const getPostsByPrice = async (res: any) => {
       }
     });
     res.json(result); //this means it was successful and returned posts
-    console.log("Posts returned by lowest price first: ", result);
+    //console.log("Posts returned by lowest price first: ", result);
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);

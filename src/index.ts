@@ -118,7 +118,17 @@ wsServer.on('request', function(request: any) {
 
   //get bearer token from request
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
-  const token = request.httpRequest.headers.authorization?.split(' ')[1];
+
+  console.log(request.httpRequest.headers.cookie);let token = request.httpRequest.headers.authorization?.split(' ')[1];
+  if (token == undefined) {
+      token = request.httpRequest.headers.cookie?.split('auth=')[1];
+  }
+
+  if (token == undefined) {
+    console.log("no token");
+    return;
+  } 
+
   let connection = null
   let account = null;
   try {
@@ -130,10 +140,12 @@ wsServer.on('request', function(request: any) {
     console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients) + " with token: " + token);
   } catch (error) {
     console.log(error);
+    console.log(token)
     connection = request.reject();
   }
 
   wsServer.SendToUser(userID, JSON.stringify({ type: 'connected', data: 'connected' }));
+  
 
 });
 
