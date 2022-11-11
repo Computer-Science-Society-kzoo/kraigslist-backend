@@ -30,6 +30,12 @@ var corsOptions = {
 }
 app.use(cors(corsOptions)); // !! SHOULD BE CHANGE TO ONLY ALLOW OUR FRONTEND !!
 
+const webSocketsServerPort = 8000;
+const webSocketServer = require('websocket').server;
+const http = require('http');
+
+
+
 /*
  __                                          ___                 __
 /\ \                     __                 /\_ \    __         /\ \__
@@ -42,8 +48,15 @@ app.use(cors(corsOptions)); // !! SHOULD BE CHANGE TO ONLY ALLOW OUR FRONTEND !!
                                  \_/__/
 */
 
-// Start the server
-const server = app.listen(3000, () => {
+
+
+/*
+88""Yb 888888 .dP"Y8 888888        db    88""Yb 88     .dP"Y8 888888 88""Yb Yb    dP 888888 88""Yb
+88__dP 88__   `Ybo."   88         dPYb   88__dP 88     `Ybo." 88__   88__dP  Yb  dP  88__   88__dP
+88"Yb  88""   o.`Y8b   88        dP__Yb  88"""  88     o.`Y8b 88""   88"Yb    YbdP   88""   88"Yb
+88  Yb 888888 8bodP'   88       dP""""Yb 88     88     8bodP' 888888 88  Yb    YP    888888 88  Yb
+
+*/const server = app.listen(3000, () => {
   const message = `
     🚀 Server ready at: http://localhost:3000
     ⭐️ See sample requests: http://pris.ly/e/ts/rest-express#3-using-the-rest-api
@@ -51,13 +64,14 @@ const server = app.listen(3000, () => {
   console.log(message);
 });
 
+
 // Get response from the server's main page
 app.get("/", async (req, res) => {
   const message = "Welcome to the the Kraigslist Backend";
   res.send(message);
 });
 
-import {login, signup} from "./api/auth";
+import {login, signup, verifyTokenAndReturnAccount} from "./api/auth";
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 
@@ -83,3 +97,47 @@ app.post("/api/messages/send", sendMessage);
 
   
  
+/*
+Yb        dP 888888 88""Yb     .dP"Y8  dP"Yb   dP""b8 88  dP 888888 888888     .dP"Y8 888888 88""Yb Yb    dP 888888 88""Yb
+ Yb  db  dP  88__   88__dP     `Ybo." dP   Yb dP   `" 88odP  88__     88       `Ybo." 88__   88__dP  Yb  dP  88__   88__dP
+  YbdPYbdP   88""   88""Yb     o.`Y8b Yb   dP Yb      88"Yb  88""     88       o.`Y8b 88""   88"Yb    YbdP   88""   88"Yb
+   YP  YP    888888 88oodP     8bodP'  YbodP   YboodP 88  Yb 888888   88       8bodP' 888888 88  Yb    YP    888888 88  Yb
+*/
+const webSocketOnlineServer = http.createServer();
+webSocketOnlineServer.listen(webSocketsServerPort);
+
+export const wsServer = new webSocketServer({
+  httpServer: webSocketOnlineServer
+});
+
+
+const clients: any = {};
+
+wsServer.on('request', function(request: any) {
+
+  //get bearer token from request
+  console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
+  const token = request.httpRequest.headers.authorization?.split(' ')[1];
+  let connection = null
+  let account = null;
+  try {
+    account = verifyTokenAndReturnAccount(token);
+    var userID = account.id;
+    // You can rewrite this part of the code to accept only the requests from allowed origin
+    connection = request.accept(null, request.origin);
+    clients[userID] = connection;
+    console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients) + " with token: " + token);
+  } catch (error) {
+    console.log(error);
+    connection = request.reject();
+  }
+
+  wsServer.SendToUser(userID, JSON.stringify({ type: 'connected', data: 'connected' }));
+
+});
+
+wsServer.SendToUser = function (userID: any, message: any) {
+  if (clients[userID]) {
+    clients[userID].sendUTF(message);
+  }
+}

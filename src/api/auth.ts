@@ -32,41 +32,6 @@ var jwt = require("jsonwebtoken");
 
 */
 
-const webSocketsServerPort = 8000;
-const webSocketServer = require('websocket').server;
-const http = require('http');
-// Spinning the http server and the websocket server.
-const server = http.createServer();
-server.listen(webSocketsServerPort);
-const wsServer = new webSocketServer({
-  httpServer: server
-});
-
-
-export const clients: any = {};
-
-wsServer.on('request', function(request: any) {
-
-  //get bearer token from request
-  console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
-  const token = request.httpRequest.headers.authorization?.split(' ')[1];
-  let connection = null
-  let account = null;
-  try {
-    account = verifyTokenAndReturnAccount(token);
-    var userID = account.id;
-    // You can rewrite this part of the code to accept only the requests from allowed origin
-    connection = request.accept(null, request.origin);
-    clients[userID] = connection;
-    console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients) + " with token: " + token);
-  } catch (error) {
-    console.log(error);
-    connection = request.reject();
-  }
-
-});
-
-
 interface User {
   username: string;
   email: string;
