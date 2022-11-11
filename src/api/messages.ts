@@ -73,6 +73,7 @@ export const createConversation = async (req: any, res: any) => {
         senderUID: userID,
         receiverUID: post.userID,
         message: message,
+        postID: postID,
       },
     });
 
@@ -153,6 +154,7 @@ export const sendMessage = async (req: any, res: any) => {
         senderUID: userID,
         receiverUID: receiver || 0,
         message: message,
+        postID: conversation.postID || 0,
       },
     });
 
@@ -245,12 +247,13 @@ export const getAllConversations = async (req: any, res: any) => {
 export const getAllMessages = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
   const receiverID = Number.parseInt(req.headers["comradeid"])
+  const postID = Number.parseInt(req.headers["postid"])
   let username = "";
   let userID = -1;
 
-  if (!Number.isInteger(receiverID)) {
+  if (!Number.isInteger(receiverID) || !Number.isInteger(postID)) {
     console.log("Invalid receiverID: " + typeof(receiverID) + " " + receiverID);
-    return res.status(400).send({ message: "Invalid receiverID" });
+    return res.status(400).send({ message: "Invalid receiverID or postID" });
   }
 
   try {
@@ -275,6 +278,7 @@ export const getAllMessages = async (req: any, res: any) => {
 
   try {
     //get messages by userid and sort them by date
+    //get only 15 messages 
     const messages = await prisma.messages.findMany({
       where: {
         OR: [
@@ -286,6 +290,9 @@ export const getAllMessages = async (req: any, res: any) => {
               {
                 receiverUID: receiverID,
               },
+              {
+                postID: postID,
+              }
             ],
           },
           {
@@ -296,12 +303,15 @@ export const getAllMessages = async (req: any, res: any) => {
               {
                 receiverUID: userID,
               },
+              {
+                postID: postID,
+              }
             ],
           },
         ],
       },
       orderBy: {
-        date: "desc",
+        date: "asc",
       },
     });
 
@@ -376,13 +386,13 @@ export const seeAllMessages = async (req: any, res: any) => {
 // Send a message to a user
 function sendNewMessageNotification(userID: number, conversationID: number , message: string) {
   try {
-    wsServer.SendToUser(userID, JSON.stringify({
+    wsServer.SendToUser(userID, {
       type: "newMessage",
       data: {
         conversationID: conversationID,
         message: message,
       },
-    }));
+    });
   } catch (e) {
     console.log(e);
   }

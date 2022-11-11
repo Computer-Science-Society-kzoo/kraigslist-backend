@@ -25,6 +25,7 @@ model messages {
   receiverUID Int
   message     String?  @db.Text
   date        DateTime @default(now()) @db.Timestamp(0)
+  postID      Int
 }
 
 model posts {

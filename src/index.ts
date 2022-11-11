@@ -121,7 +121,7 @@ wsServer.on('request', function(request: any) {
 
   console.log(request.httpRequest.headers.cookie);let token = request.httpRequest.headers.authorization?.split(' ')[1];
   if (token == undefined) {
-      token = request.httpRequest.headers.cookie?.split('auth=')[1].split(";")[0];
+      token = request.httpRequest.headers.cookie?.split('auth=')[1]?.split(";")[0];
   }
 
   if (token == undefined) {
@@ -145,13 +145,16 @@ wsServer.on('request', function(request: any) {
     connection = request.reject();
   }
 
-  wsServer.SendToUser(userID, JSON.stringify({ type: 'connected', data: 'connected' }));
+  wsServer.SendToUser(userID, { type: 'connected', data: 'connected' });
+  wsServer.SendToUser(userID, { type: 'connected', data: 'secondtest' });
+
   
 
 });
 
 wsServer.SendToUser = function (userID: any, message: any) {
   if (clients[userID]) {
-    clients[userID].sendUTF(message);
+    console.log("Sending data (" + message.type + ")  to user: " + userID);
+    clients[userID].send(JSON.stringify(message));
   }
 }
