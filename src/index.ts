@@ -58,7 +58,8 @@ const http = require('http');
 
 */const server = app.listen(3000, () => {
   const message = `
-    🚀 Server ready at: http://localhost:3000
+    🚀 REST APIs Server ready at: http://localhost:3000
+    🫡  Web Socket Server ready at: http://localhost:8000
     ⭐️ See sample requests: http://pris.ly/e/ts/rest-express#3-using-the-rest-api
     `;
   console.log(message);

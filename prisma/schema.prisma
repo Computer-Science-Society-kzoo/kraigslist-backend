@@ -53,3 +53,9 @@ model users {
   country        String? @db.VarChar(50)
   city           String? @db.VarChar(50)
 }
+
+model messages_notifications {
+  userID        Int   @id
+  totalNumber   Int   @default(0)
+  conversations Json?
+}
