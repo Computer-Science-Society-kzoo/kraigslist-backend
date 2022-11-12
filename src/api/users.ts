@@ -43,16 +43,3 @@ export const getUser = async (req: any, res: any) => {
     res.json(user);
   };
   
-// //Shanon's work in progress for deleting users:
-// // Delete a specific user if user is authenticated + user is the same as the user being deleted
-// export const deleteUser = async (req: any, res: any) => {
-//   const username = req.query.username;
-//   console.log("Attempting to delete user: ", username);
-//   const deletedUser = await prisma.users.delete({
-//     where: {
-//       username: String(username),
-//     },
-//   })
-//   console.log("User deleted. Sending the response back.");
-//   res.json(deletedUser);
-// };

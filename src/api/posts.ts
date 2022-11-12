@@ -546,3 +546,20 @@ export const getPostsMaster = async (req: any, res: any) => {
   }
 };
 
+// Shanon's progress on deletePost() function
+// Delete a single post in the database
+// const deletePost = await prisma.post.delete({
+//   where: {
+//     username: username,
+//   },
+// })
+// console.log(username + "deleted a post");
+// res.status(200).send("Post deleted");
+// } catch (error) {
+// console.log(error);
+// res.status(500).send("Error deleting post");
+// return;
+// }
+// }
+// };
+
