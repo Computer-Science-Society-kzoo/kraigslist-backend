@@ -76,8 +76,14 @@ import {login, signup, verifyTokenAndReturnAccount} from "./api/auth";
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 
-import { deleteAccount  } from "./api/account";
+import { deleteAccount, changeUsername, changeEmail, changePassword, changeFirstName, changeSurname, getUsername  } from "./api/account";
 app.post("/api/account/delete", deleteAccount);
+app.post("/api/account/changeUsername", changeUsername);
+app.post("/api/account/changeEmail", changeEmail);
+app.post("/api/account/changePassword", changePassword);
+app.post("/api/account/changeFirstName", changeFirstName);
+app.post("/api/account/changeSurname", changeSurname);
+app.post("/api/account/getUsername", getUsername);
 
 import { getUsers, getUser } from "./api/users";
 app.get("/users", getUsers);

@@ -65,3 +65,261 @@ export const deleteAccount = async (req: any, res: any) => {
     return;
   }
 };
+
+//get username based on token
+export const getUsername = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.findUnique({
+      where: {
+        username: username,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
+
+//change user name
+export const changeUsername = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        username: req.body.username,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
+//change user password
+export const changePassword = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        password: req.body.password,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
+//change user email
+export const changeEmail = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        email: req.body.email,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
+//change name
+export const changeFirstName = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        first_name: req.body.firstname,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
+//change surname
+export const changeSurname = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+
+  try {
+    const result = await prisma.users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        last_name: req.body.surname,
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    console.log("Unknown error:" + error);
+    res.sendStatus(500);
+    return;
+  }
+};
+
