@@ -12,6 +12,9 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
+// JWT is a library that let us create and verify tokens
+// https://www.npmjs.com/package/jsonwebtoken
+var jwt = require("jsonwebtoken");
 /*
 
                         __
@@ -546,20 +549,61 @@ export const getPostsMaster = async (req: any, res: any) => {
   }
 };
 
+
 //Shanon's progress on deletePost() function
 //Delete a single post in the database
-// const deletePost = await prisma.posts.delete({
-//   where: {
-//     username: username,
-//   },
-// })
-// console.log(username + "deleted a post");
-// res.status(200).send("Post deleted");
-// } catch (error) {
-// console.log(error);
-// res.status(500).send("Error deleting post");
-// return;
-// }
-// }
-// };
+const deletePost = async (req: any, res:any) => {
+  const token = req.headers["authorization"]?.slice(7);
+  const conID = req.headers["conid"];
 
+  console.log(token);
+
+  let username = "";
+
+  if (!token) {
+    return res.status(401).send({ auth: false, message: "No token provided." });
+  }
+
+  if (!conID) {
+    return res.status(401).send({ auth: false, message: "No conID provided." });
+  }
+
+  await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    function (err: any, decoded: any) {
+      if (err) {
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to authenticate token." });
+      }
+      // if everything good, save to request for use in other routes
+      username = decoded.username;
+    }
+  );
+  try {
+
+    const post = await prisma.posts.findUnique({
+      where: {
+        id: parseInt(conID),
+      },
+    });
+
+    if (post?.username != username) {
+      return res.status(401).send({ auth: false, message: "Not authorized." });
+    } else {
+      const deletePost = await prisma.posts.delete({
+        where: {
+          id: conID,
+        },
+      });
+    }
+
+  console.log(username + "deleted a post");
+  res.status(200).send("Post deleted");
+  } catch (error) {
+    console.log("Unknown error:" + error); 
+    res.sendStatus(500);
+    return;
+  }
+}
