@@ -16,10 +16,10 @@ app.use(cookieParser());
 // We need to limit the origins (websites) that can make requests to our API
 // https://www.npmjs.com/package/cors
 var cors = require("cors");
-var whitelist = ['http://localhost:3000', "http://localhost:3001" /** other domains if any */ ]
+var whitelist = ['http://localhost:3000', "http://localhost:3001" /** other domains if any */]
 var corsOptions = {
   credentials: true,
-  origin: function(origin: any, callback: any) {
+  origin: function (origin: any, callback: any) {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -72,32 +72,40 @@ app.get("/", async (req, res) => {
   res.send(message);
 });
 
-import {login, signup, verifyTokenAndReturnAccount} from "./api/auth";
+import { login, signup, verifyTokenAndReturnAccount } from "./api/auth";
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 
-import { deleteAccount  } from "./api/account";
+import { deleteAccount, changeUsername, changeEmail, changePassword, changeFirstName, changeSurname, getUsername  } from "./api/account";
 app.post("/api/account/delete", deleteAccount);
+app.post("/api/account/changeUsername", changeUsername);
+app.post("/api/account/changeEmail", changeEmail);
+app.post("/api/account/changePassword", changePassword);
+app.post("/api/account/changeFirstName", changeFirstName);
+app.post("/api/account/changeSurname", changeSurname);
+app.post("/api/account/getUsername", getUsername);
 
 import { getUsers, getUser } from "./api/users";
 app.get("/users", getUsers);
 app.get("/user", getUser);
 
-import { getPosts, getMyPosts, createPost, searchPosts, getPostsMaster } from "./api/posts";
+import { getPosts, getMyPosts, createPost, searchPosts, getPostsMaster, myPosts } from "./api/posts";
 app.get("/api/posts", getPosts);
 app.get("/api/posts/master", getPostsMaster);
 app.post("/api/posts/makepost", createPost);
 app.get("/api/posts/YourPosts", getMyPosts);
 app.get("/api/posts/searchPosts", searchPosts);
+app.get("/api/posts/getMyPosts", getMyPosts);
 
-import { getAllConversations, createConversation, getAllMessages, sendMessage} from "./api/messages";
+import { getAllConversations, createConversation, getAllMessages, sendMessage, getTotalUnreadMessagesPerUser} from "./api/messages";
 app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
 app.post("/api/messages/send", sendMessage);
+app.get("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
 
-  
- 
+
+
 /*
 Yb        dP 888888 88""Yb     .dP"Y8  dP"Yb   dP""b8 88  dP 888888 888888     .dP"Y8 888888 88""Yb Yb    dP 888888 88""Yb
  Yb  db  dP  88__   88__dP     `Ybo." dP   Yb dP   `" 88odP  88__     88       `Ybo." 88__   88__dP  Yb  dP  88__   88__dP
@@ -114,20 +122,20 @@ export const wsServer = new webSocketServer({
 
 const clients: any = {};
 
-wsServer.on('request', function(request: any) {
+wsServer.on('request', function (request: any) {
 
   //get bearer token from request
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
 
-  console.log(request.httpRequest.headers.cookie);let token = request.httpRequest.headers.authorization?.split(' ')[1];
+  console.log(request.httpRequest.headers.cookie); let token = request.httpRequest.headers.authorization?.split(' ')[1];
   if (token == undefined) {
-      token = request.httpRequest.headers.cookie?.split('auth=')[1]?.split(";")[0];
+    token = request.httpRequest.headers.cookie?.split('auth=')[1]?.split(";")[0];
   }
 
   if (token == undefined) {
     console.log("no token");
     return;
-  } 
+  }
 
   let connection = null
   let account = null;
@@ -148,7 +156,7 @@ wsServer.on('request', function(request: any) {
   wsServer.SendToUser(userID, { type: 'connected', data: 'connected' });
   wsServer.SendToUser(userID, { type: 'connected', data: 'secondtest' });
 
-  
+
 
 });
 

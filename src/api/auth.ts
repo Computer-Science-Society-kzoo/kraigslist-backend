@@ -181,7 +181,7 @@ export function userIsLoggedIn(token: string): boolean {
 }
 
 
-
+//http://localhost:3000/api/auth/getUser
 export function verifyTokenAndReturnUser(token: string): any {
   console.log("Trying to verify token: " + token);
   try {
@@ -193,6 +193,7 @@ export function verifyTokenAndReturnUser(token: string): any {
   }
   return undefined;
 }
+
 
 export function verifyTokenAndReturnAccount(token: string): any {
   console.log("Trying to verify token: " + token);
@@ -216,7 +217,7 @@ export function verifyTokenAndReturnAccount(token: string): any {
 //       var username = userInfo.username;
 //       console.log(username);
 //       return username;
-      
+
 //     }
 //   }
 //   catch (err) {
@@ -225,8 +226,8 @@ export function verifyTokenAndReturnAccount(token: string): any {
 // }
 
 export function getUserName2() {
-       
-      var username = userInfo.username;
-      return username;
-    
+
+  var username = userInfo.username;
+  return username;
+
 }

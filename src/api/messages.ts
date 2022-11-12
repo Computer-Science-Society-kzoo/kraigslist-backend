@@ -25,6 +25,8 @@ app.use(express.json());
 import { wsServer } from "../index";
 import { verifyTokenAndReturnAccount } from "./auth";
 
+const moment = require('moment');
+
 export const createConversation = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
   let { postID, message } = req.body;
@@ -148,6 +150,7 @@ export const sendMessage = async (req: any, res: any) => {
     if (receiver === userID) {
       receiver = conversation.senderUID;
     }
+    
 
     const newMessage = await prisma.messages.create({
       data: {
@@ -165,6 +168,7 @@ export const sendMessage = async (req: any, res: any) => {
       data: {
         lastMessage: message,
         lastSenderID: userID,
+        date: moment().toDate(),
         newMessages: (conversation.newMessages || 0) + 1,
       },
     });
@@ -216,6 +220,9 @@ export const getAllConversations = async (req: any, res: any) => {
           },
         ],
       },
+      orderBy: {
+        date: "desc",
+      },
     });
 
     let sendData = [];
@@ -248,12 +255,14 @@ export const getAllMessages = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
   const receiverID = Number.parseInt(req.headers["comradeid"])
   const postID = Number.parseInt(req.headers["postid"])
+  const conversationID = Number.parseInt(req.headers["conversationid"])
+
   let username = "";
   let userID = -1;
 
-  if (!Number.isInteger(receiverID) || !Number.isInteger(postID)) {
-    console.log("Invalid receiverID: " + typeof(receiverID) + " " + receiverID);
-    return res.status(400).send({ message: "Invalid receiverID or postID" });
+  if (!Number.isInteger(receiverID) || !Number.isInteger(postID) || !Number.isInteger(conversationID)) {
+    console.log("Invalid receiverID: " + typeof(receiverID) + " " + receiverID + " postID: " + typeof(postID) + " " + postID + " conversationID: " + typeof(conversationID) + " " + conversationID);
+    return res.status(400).send({ message: "Invalid receiverID or postID or conversationID" });
   }
 
   try {
@@ -279,6 +288,13 @@ export const getAllMessages = async (req: any, res: any) => {
   try {
     //get messages by userid and sort them by date
     //get only 15 messages 
+    //SELECT TOP 10 first_name, last_name, score, COUNT(*) OVER()
+// FROM players
+//WHERE (score < @previousScore)
+   //OR (score = @previousScore AND player_id < @previousPlayerId)
+// ORDER BY score DESC, player_id DESC
+
+    //get only 10 messages between two dates 
     const messages = await prisma.messages.findMany({
       where: {
         OR: [
@@ -308,10 +324,20 @@ export const getAllMessages = async (req: any, res: any) => {
               }
             ],
           },
+
         ],
       },
       orderBy: {
         date: "asc",
+      },
+    });
+
+    await prisma.conversations.update({
+      where: {
+        conversationID: conversationID,
+      },
+      data: {
+        newMessages: 0,
       },
     });
 
@@ -382,6 +408,60 @@ export const seeAllMessages = async (req: any, res: any) => {
   }
 };
 
+export const getTotalUnreadMessagesPerUser = async (req: any, res: any) => {
+
+  const token = req.cookies.auth;
+
+  let username = "";
+  let userID = -1;
+
+  try {
+    if (token === undefined) {
+      res.status(401).send("No token provided");
+      return;
+    }
+
+    const account = await verifyTokenAndReturnAccount(token);
+
+    if (account === undefined) {
+      res.status(401).send("Token is invalid");
+      return;
+    }
+
+    username = account.username;
+    userID = account.id;
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+
+  try {
+    const conversations = await prisma.conversations.findMany({
+      where: {
+        OR: [
+          {
+            senderUID: userID,
+          },
+          {
+            receiverUID: userID,
+          },
+        ],
+      },
+    });
+
+    let total = 0;
+    for (let i = 0; i < conversations.length; i++) {
+      total += conversations[i].newMessages || 0;
+    }
+
+    res.status(200).json({total: total});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error retrieving conversations");
+    return;
+  }
+
+}
 
 // Send a message to a user
 function sendNewMessageNotification(userID: number, conversationID: number , message: string) {

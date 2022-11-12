@@ -29,7 +29,7 @@ var jwt = require("jsonwebtoken");
 
 */
 
-import { userIsLoggedIn } from "./auth";
+import { userIsLoggedIn, verifyTokenAndReturnAccount } from "./auth";
 
 // Get all Posts in a JSON format by most recent
 export const getPosts = async (req: any, res: any) => {
@@ -73,7 +73,8 @@ interface searchP {
 }
 
 import { getUserName2 } from "./auth";
-import { verifyTokenAndReturnAccount } from "./auth";
+//import { verifyTokenAndReturnAccount } from "./auth";
+// import { verifyTokenAndReturnUser } from "./auth";
 
 // Create a new post
 // http://localhost:3000/api/auth/makepost
@@ -146,22 +147,83 @@ export const createPost = async (
   }
 };
 
-//WORKING ON RETURNING POST FOR A SINGLE USERNAME
+// Get a post by its ID
+// http://localhost:3000/api/posts/getMyPosts
+export const myPosts = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+  let username = "";
+  let userID = -1;
 
+  try {
+    if (token === undefined) {
+      res.status(401).send("No token provided");
+      return;
+    }
+    const account = await verifyTokenAndReturnAccount(token);
+
+    if (account === undefined) {
+      res.status(401).send("Token is invalid");
+      return;
+    }
+
+    username = account.username;
+    userID = account.id;
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+
+  try {
+    const post = await prisma.posts.findMany({
+      where: {
+        userID: userID,
+      },
+    });
+    res.status(200).send(post);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error getting posts");
+    return;
+  }
+};
+
+
+//get token
 //type GET
 // http://localhost:3000/api/posts/getMyPosts
-export const getMyPosts = async (req: string, res: any) => {
-  var un = getUserName2();
-  console.log(un);
+export const getMyPosts = async (req: any, res: any) => {
+  console.log("TEST")
+  //get a token
+  // If fields are missing, return an error
+  const token2 = req.headers["authorization"]?.slice(7);
+
+  const token = req.cookies.auth
+
+  let username = ""
+  console.log("TOKEN: ", token)
+  try {
+    if (token === undefined) {
+      res.status(401).send("No token provided: " + token);
+    }
+    let account = await verifyTokenAndReturnAccount(token);
+    if (account === undefined) {
+      res.status(401).send("Token is invalid");
+    }
+
+    username = account.username;
+
+  } catch (e) {
+    console.log(e);
+    return;
+  }
   try {
     const result = await prisma.posts.findMany({
       where: {
-        username: un,
+        username: username,
       },
     });
-    res.json(result); //this means it was successful and returned posts??
-    //console.log("Posts returned for username: ", result);
-    //console.log(getUsername.toString())
+    res.status(200).json(result); //if successful, return posts
+
   } catch (error) {
     console.log("Unknown error:" + error); //make this more specific
     res.sendStatus(500);
