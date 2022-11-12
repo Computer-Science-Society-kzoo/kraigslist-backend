@@ -97,11 +97,12 @@ app.get("/api/posts/YourPosts", getMyPosts);
 app.get("/api/posts/searchPosts", searchPosts);
 app.get("/api/posts/getMyPosts", getMyPosts);
 
-import { getAllConversations, createConversation, getAllMessages, sendMessage } from "./api/messages";
+import { getAllConversations, createConversation, getAllMessages, sendMessage, getTotalUnreadMessagesPerUser} from "./api/messages";
 app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
 app.post("/api/messages/send", sendMessage);
+app.get("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
 
 
 
