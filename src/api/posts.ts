@@ -548,7 +548,7 @@ export const getPostsMaster = async (req: any, res: any) => {
 
 // Shanon's progress on deletePost() function
 // Delete a single post in the database
-// const deletePost = await prisma.post.delete({
+// const deletePost = await prisma.posts.delete({
 //   where: {
 //     username: username,
 //   },
