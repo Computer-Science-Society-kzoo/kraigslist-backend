@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "REST APis",
+            "script": "npm",
+            "args" : "run dev"
+        }
+    ]
+}
