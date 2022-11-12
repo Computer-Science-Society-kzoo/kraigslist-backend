@@ -559,7 +559,5 @@ export const getPostsMaster = async (req: any, res: any) => {
 // console.log(error);
 // res.status(500).send("Error deleting post");
 // return;
-// }
-// }
 // };
 
