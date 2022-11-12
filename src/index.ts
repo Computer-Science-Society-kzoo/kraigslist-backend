@@ -83,7 +83,7 @@ app.post("/api/account/changeEmail", changeEmail);
 app.post("/api/account/changePassword", changePassword);
 app.post("/api/account/changeFirstName", changeFirstName);
 app.post("/api/account/changeSurname", changeSurname);
-app.post("/api/account/getUsername", getUsername);
+app.get("/api/account/getUsername", getUsername);
 
 import { getUsers, getUser } from "./api/users";
 app.get("/users", getUsers);
