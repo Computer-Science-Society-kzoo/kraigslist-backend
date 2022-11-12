@@ -168,6 +168,7 @@ export const getMyPosts = async (req: string, res: any) => {
 
 
 //make a request to find posts with either a title or text that contains the search term
+//CAN BE DELETED?
 //type GET
 // http://localhost:3000/api/posts/searchPosts
 export const searchPosts = async (req: any, res: any) => {
@@ -200,6 +201,7 @@ export const getPostsMaster = async (req: any, res: any) => {
     let priceFilter = filter2 //for clarity
     let filter3 = req.query.filter3; //deadline filter (desc posts with deadlines only)
     let deadlineFilter = filter3 //for clarity
+    console.log("deadine implemented?: " + deadlineFilter);
     console.log("filter2/priceFilter: " + priceFilter);
     console.log("filter: " + filter);
     console.log("toSearch: " + toSearch);
@@ -544,59 +546,3 @@ export const getPostsMaster = async (req: any, res: any) => {
   }
 };
 
-
-
-//make a request to find posts with a specific type. right now i have it accepting any string, so front end will
-//have to make sure they are limiting the user to only selecting "request" or "offer"
-//type GET
-export const getPostsByType = async (type: string, res: any) => {
-  try {
-    const result = await prisma.posts.findMany({
-      where: {
-        type: type
-      }
-    });
-    res.json(result); //this means it was successful and returned posts
-    //console.log("Posts returned for type: ", result);
-  } catch (error) {
-    console.log("Unknown error:" + error); //make this more specific
-    res.sendStatus(500);
-    return;
-  }
-}
-
-//make a request to organize posts by expiration date. i dont think that the filters can stack right now just fyi
-//type GET
-export const getPostsByDeadline = async (res: any) => {
-  try {
-    const result = await prisma.posts.findMany({
-      orderBy: {
-        offer_deadline: 'asc'
-      }
-    });
-    res.json(result); //this means it was successful and returned posts
-    //console.log("Posts returned by oldest deadline first: ", result);
-  } catch (error) {
-    console.log("Unknown error:" + error); //make this more specific
-    res.sendStatus(500);
-    return;
-  }
-}
-
-//make a request to organize posts by price (lowest to highest)
-//type GET
-export const getPostsByPrice = async (res: any) => {
-  try {
-    const result = await prisma.posts.findMany({
-      orderBy: {
-        price: 'asc'
-      }
-    });
-    res.json(result); //this means it was successful and returned posts
-    //console.log("Posts returned by lowest price first: ", result);
-  } catch (error) {
-    console.log("Unknown error:" + error); //make this more specific
-    res.sendStatus(500);
-    return;
-  }
-}
