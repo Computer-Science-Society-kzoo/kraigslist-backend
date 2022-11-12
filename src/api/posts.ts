@@ -197,11 +197,47 @@ export const getPostsMaster = async (req: any, res: any) => {
     let toSearch = req.query.text;
     let filter = req.query.filter;
     let filter2 = req.query.filter2; //price filter
-    console.log("filter2: " + filter2);
+    let priceFilter = filter2 //for clarity
+    let filter3 = req.query.filter3; //deadline filter (desc posts with deadlines only)
+    let deadlineFilter = filter3 //for clarity
+    console.log("filter2/priceFilter: " + priceFilter);
     console.log("filter: " + filter);
     console.log("toSearch: " + toSearch);
-    if (toSearch != "" && filter != "" && filter2 != "") { //need to add if filter is offer_deadline: asc/desc 
-      console.log("the order of prices to be shown is: " + filter2);
+    if (toSearch != "" && filter != "" && priceFilter != "" && deadlineFilter != "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
+      const result = await prisma.posts.findMany({
+        where: {
+
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            { type: { contains: filter } },
+            {
+              price: {
+                not: null
+              },
+            },
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            price: priceFilter, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+            offer_deadline: deadlineFilter //will be "asc" because we want the soonest deadline to be first
+          }
+        ]
+      });
+      res.json(result); //this means it was successful and returned posts with normal search and price:asc
+      console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch != "" && filter != "" && priceFilter != "" && deadlineFilter == "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
       const result = await prisma.posts.findMany({
         where: {
 
@@ -220,14 +256,39 @@ export const getPostsMaster = async (req: any, res: any) => {
         },
         orderBy: [
           {
-            price: filter2, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+            price: priceFilter, //this is the variable that will be either "asc" or "desc"
           }
         ]
       });
       res.json(result); //this means it was successful and returned posts with normal search and price:asc
       console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch != "" && filter != "" && filter2 == "") {
+    else if (toSearch != "" && filter != "" && priceFilter == "" && deadlineFilter != "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            { type: { contains: filter } },
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            offer_deadline: deadlineFilter
+          }
+        ]
+      })
+      res.json(result); //this means it was successful and returned posts with normal search & filter
+      //console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch != "" && filter != "" && priceFilter == "" && deadlineFilter == "") {
       const result = await prisma.posts.findMany({
         where: {
           OR: [
@@ -242,7 +303,30 @@ export const getPostsMaster = async (req: any, res: any) => {
       res.json(result); //this means it was successful and returned posts with normal search & filter
       //console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch != "" && filter == "" && filter2 == "") {
+    else if (toSearch != "" && filter == "" && priceFilter == "" && deadlineFilter != "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            offer_deadline: deadlineFilter
+          }
+        ]
+      });
+      res.json(result); //this means it was successful and returned posts
+    }
+    else if (toSearch != "" && filter == "" && priceFilter == "" && deadlineFilter == "") {
       const result = await prisma.posts.findMany({
         where: {
           OR: [
@@ -252,10 +336,40 @@ export const getPostsMaster = async (req: any, res: any) => {
         }
       });
       res.json(result); //this means it was successful and returned posts
-      //console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch == "" && filter != "" && filter2 != "") {
-      console.log("the order of prices to be shown is: " + filter2);
+    else if (toSearch == "" && filter != "" && priceFilter != "" && deadlineFilter != "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
+      const result = await prisma.posts.findMany({
+        where: {
+          AND: [
+            { type: { contains: filter } },
+            {
+              offer_deadline: {
+                not: null
+              }
+            },
+            {
+              price: {
+                not: null
+              }
+            },
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ],
+        },
+        orderBy: [
+          {
+            price: priceFilter,
+            offer_deadline: deadlineFilter
+          }
+        ]
+      });
+    }
+    else if (toSearch == "" && filter != "" && priceFilter != "" && deadlineFilter == "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
       const result = await prisma.posts.findMany({
         where: {
           AND: [
@@ -267,7 +381,7 @@ export const getPostsMaster = async (req: any, res: any) => {
         },
         orderBy: [
           {
-            price: filter2,
+            price: priceFilter,
           }
         ]
       });
@@ -275,8 +389,29 @@ export const getPostsMaster = async (req: any, res: any) => {
       res.json(result); //this means it was successful and returned posts
       //console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch == "" && filter == "" && filter2 != "") {
-      console.log("the order of prices to be shown is: " + filter2);
+    else if (toSearch == "" && filter == "" && priceFilter != "" && deadlineFilter != "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
+      const result = await prisma.posts.findMany({
+        where: {
+          price: {
+            not: null
+          },
+          offer_deadline: {
+            not: null
+          }
+
+        },
+        orderBy: [
+          {
+            price: priceFilter, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+            offer_deadline: deadlineFilter
+          },
+        ],
+      })
+      res.json(result);
+    }
+    else if (toSearch == "" && filter == "" && priceFilter != "" && deadlineFilter == "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
       const result = await prisma.posts.findMany({
         where: {
           price: {
@@ -285,16 +420,34 @@ export const getPostsMaster = async (req: any, res: any) => {
         },
         orderBy: [
           {
-            price: filter2, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+            price: priceFilter, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
 
           },
         ],
       })
-
-      res.json(result); //this means it was successful and returned posts
-      //console.log("Posts returned for search term: ", result);
+      res.json(result);
     }
-    else if (toSearch == "" && filter != "" && filter2 == "") {
+    else if (toSearch == "" && filter != "" && priceFilter == "" && deadlineFilter != "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          AND: [
+            { type: { contains: filter } },
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            offer_deadline: deadlineFilter
+          }
+        ]
+      });
+      res.json(result);
+    }
+    else if (toSearch == "" && filter != "" && priceFilter == "" && deadlineFilter == "") {
       const result = await prisma.posts.findMany({
         where: {
           AND: [
@@ -302,11 +455,40 @@ export const getPostsMaster = async (req: any, res: any) => {
           ]
         }
       });
-      res.json(result); //this means it was successful and returned posts
-      //console.log("Posts returned for search term: ", result);
+      res.json(result);
     }
-    else if (toSearch != "" && filter == "" && filter2 != "") {
-      console.log("the order of prices to be shown is: " + filter2);
+    else if (toSearch != "" && filter == "" && priceFilter != "" && deadlineFilter != "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            {
+              price: {
+                not: null
+              }
+            },
+            {
+              offer_deadline: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            price: priceFilter,
+            offer_deadline: deadlineFilter
+          }
+        ]
+      });
+      res.json(result);
+    }
+    else if (toSearch != "" && filter == "" && priceFilter != "" && deadlineFilter == "") {
+      console.log("the order of prices to be shown is: " + priceFilter);
       const result = await prisma.posts.findMany({
         where: {
           OR: [
@@ -319,15 +501,30 @@ export const getPostsMaster = async (req: any, res: any) => {
         },
         orderBy: [
           {
-            price: filter2,
+            price: priceFilter,
           }
         ]
       });
-      res.json(result); //this means it was successful and returned posts
-      //console.log("Posts returned for search term: ", result);
+      res.json(result);
     }
-
-
+    else if (toSearch == "" && filter == "" && priceFilter == "" && deadlineFilter != "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          AND: [
+            {
+              offer_deadline: {
+                not: null
+              }
+            }]
+        },
+        orderBy: [
+          {
+            offer_deadline: deadlineFilter
+          }
+        ]
+      });
+      res.json(result);
+    }
     else {
       const result = await prisma.posts.findMany({
         orderBy: [
@@ -338,7 +535,6 @@ export const getPostsMaster = async (req: any, res: any) => {
       }
       );
       res.json(result);
-      //console.log("Posts returned for search term: ", result);
     }
 
   } catch (error) {
