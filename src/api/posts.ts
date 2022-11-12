@@ -196,48 +196,53 @@ export const getPostsMaster = async (req: any, res: any) => {
   try {
     let toSearch = req.query.text;
     let filter = req.query.filter;
+    let filter2 = req.query.filter2; //price filter
+    console.log("filter2: " + filter2);
     console.log("filter: " + filter);
     console.log("toSearch: " + toSearch);
-    if (toSearch != "" && filter != "") { //need to add if filter is offer_deadline: asc/desc 
-      if (filter == "price:asc" || filter == "price:desc") {
-        //get variable with only "asc" or "dec" depending on filter to use for query
-        let priceFilter = filter.slice(6);
-        console.log("the order of prices to be shown is: " + priceFilter);
-        const result = await prisma.posts.findMany({
-          where: {
-            OR: [
-              { title: { contains: toSearch } },
-              { text: { contains: toSearch } }
-            ]
-          },
-          orderBy: [
-            {
-              price: priceFilter, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+    if (toSearch != "" && filter != "" && filter2 != "") { //need to add if filter is offer_deadline: asc/desc 
+      console.log("the order of prices to be shown is: " + filter2);
+      const result = await prisma.posts.findMany({
+        where: {
 
-            },
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
           ],
-        })
-        res.json(result); //this means it was successful and returned posts with normal search and price:asc
-        console.log("Posts returned for search term: ", result);
-      }
-      else {
-        const result = await prisma.posts.findMany({
-          where: {
-            OR: [
-              { title: { contains: toSearch } },
-              { text: { contains: toSearch } }
-            ],
-            AND: [
-              { type: { contains: filter } }
-            ]
+          AND: [
+            { type: { contains: filter } },
+            {
+              price: {
+                not: null
+              }
+            }
+          ]
+        },
+        orderBy: [
+          {
+            price: filter2, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
           }
-        })
-        res.json(result); //this means it was successful and returned posts with normal search & filter
-        //console.log("Posts returned for search term: ", result);
-      };
-
+        ]
+      });
+      res.json(result); //this means it was successful and returned posts with normal search and price:asc
+      console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch != "" && filter == "") {
+    else if (toSearch != "" && filter != "" && filter2 == "") {
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          AND: [
+            { type: { contains: filter } }
+          ]
+        }
+      })
+      res.json(result); //this means it was successful and returned posts with normal search & filter
+      //console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch != "" && filter == "" && filter2 == "") {
       const result = await prisma.posts.findMany({
         where: {
           OR: [
@@ -249,7 +254,47 @@ export const getPostsMaster = async (req: any, res: any) => {
       res.json(result); //this means it was successful and returned posts
       //console.log("Posts returned for search term: ", result);
     }
-    else if (toSearch == "" && filter != "") {
+    else if (toSearch == "" && filter != "" && filter2 != "") {
+      console.log("the order of prices to be shown is: " + filter2);
+      const result = await prisma.posts.findMany({
+        where: {
+          AND: [
+            { type: { contains: filter } }
+          ],
+          NOT: [
+            { price: null }
+          ]
+        },
+        orderBy: [
+          {
+            price: filter2,
+          }
+        ]
+      });
+
+      res.json(result); //this means it was successful and returned posts
+      //console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch == "" && filter == "" && filter2 != "") {
+      console.log("the order of prices to be shown is: " + filter2);
+      const result = await prisma.posts.findMany({
+        where: {
+          price: {
+            not: null
+          }
+        },
+        orderBy: [
+          {
+            price: filter2, //this is the variable that will be either "asc" or "desc", might not work because price query needs to be in single quotes
+
+          },
+        ],
+      })
+
+      res.json(result); //this means it was successful and returned posts
+      //console.log("Posts returned for search term: ", result);
+    }
+    else if (toSearch == "" && filter != "" && filter2 == "") {
       const result = await prisma.posts.findMany({
         where: {
           AND: [
@@ -260,11 +305,34 @@ export const getPostsMaster = async (req: any, res: any) => {
       res.json(result); //this means it was successful and returned posts
       //console.log("Posts returned for search term: ", result);
     }
+    else if (toSearch != "" && filter == "" && filter2 != "") {
+      console.log("the order of prices to be shown is: " + filter2);
+      const result = await prisma.posts.findMany({
+        where: {
+          OR: [
+            { title: { contains: toSearch } },
+            { text: { contains: toSearch } }
+          ],
+          NOT: [
+            { price: null }
+          ]
+        },
+        orderBy: [
+          {
+            price: filter2,
+          }
+        ]
+      });
+      res.json(result); //this means it was successful and returned posts
+      //console.log("Posts returned for search term: ", result);
+    }
+
+
     else {
       const result = await prisma.posts.findMany({
         orderBy: [
           {
-            dt_created: 'desc',
+            dt_created: "desc",
           },
         ],
       }
