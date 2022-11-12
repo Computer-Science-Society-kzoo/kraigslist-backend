@@ -549,8 +549,6 @@ export const getPostsMaster = async (req: any, res: any) => {
   }
 };
 
-
-//Shanon's progress on deletePost() function
 //Delete a single post in the database
 const deletePost = async (req: any, res:any) => {
   const token = req.headers["authorization"]?.slice(7);
