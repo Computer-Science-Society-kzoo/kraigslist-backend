@@ -154,28 +154,27 @@ const clients: any = {};
 wsServer.on('request', function (request: any) {
   console.log('Connection from origin ' + request.origin + '.');
   //get bearer token from request
-  console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
-
-  //get access_token
-
-  let token = request.httpRequest.headers.cookie.split('=')[1]
   
-  
-  if (token == undefined) {
-    let token = request.httpRequest.url.split('=')[1]
-  }   
- 
-
-  if (token == undefined) {
-    console.log("TOKEN: " + token);
-    console.log("no token");
-    request.reject();
-    return;
-  }
-
-  let connection = null
-  let account = null;
   try {
+    //get access_token
+    let token = request.httpRequest.headers.cookie.split('=')[1]
+    
+    
+    if (token == undefined) {
+      let token = request.httpRequest.url.split('=')[1]
+    }   
+  
+
+    if (token == undefined) {
+      console.log("TOKEN: " + token);
+      console.log("no token");
+      request.reject();
+      return;
+    }
+
+    let connection = null
+    let account = null;
+    
     account = verifyTokenAndReturnAccount(token);
     var userID = account.id;
     // You can rewrite this part of the code to accept only the requests from allowed origin
@@ -185,8 +184,7 @@ wsServer.on('request', function (request: any) {
     console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients) + " with token: " + token);
   } catch (error) {
     console.log(error);
-    console.log(token)
-    connection = request.reject();
+    request.reject();
   }
 
   wsServer.SendToUser(userID, { type: 'connected', data: 'connected' });
