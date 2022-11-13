@@ -73,15 +73,13 @@ if (process.env.NODE_ENV === "production") {
     //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
       
   }, app).listen(4000, () => {
-    console.log('HTTPS server is running at localhost:' + 4000)
+    console.log('      🚀 HTTPS REST APIs Server ready at:' + 4000)
   })
 } else if (process.env.NODE_ENV === "development") {
 
   const server = app.listen(3000, () => {
     const message = `
       🚀 REST APIs Server ready at: http://localhost:3000
-      🫡  Web Socket Server ready at: http://localhost:8000
-      ⭐️ See sample requests: http://pris.ly/e/ts/rest-express#3-using-the-rest-api
       `;
     console.log(message);
   });
@@ -146,7 +144,10 @@ const webSocketOnlineServer = (process.env.NODE_ENV === "production") ? https.cr
     //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
   }) : http.createServer()
 
-webSocketOnlineServer.listen(4500);
+webSocketOnlineServer.listen(4500
+  , () => {
+    console.log('      🫡  Web Socket Server ready at: http://localhost:4500')    
+    });
 
 export const wsServer = new webSocketServer({
   httpServer: webSocketOnlineServer
