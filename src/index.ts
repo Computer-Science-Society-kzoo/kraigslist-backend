@@ -6,6 +6,9 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
+const https = require("https");
+const fs = require('fs')
+
 
 //Cookie Parser is 
 const cookieParser = require("cookie-parser");
@@ -56,15 +59,37 @@ const http = require('http');
 88"Yb  88""   o.`Y8b   88        dP__Yb  88"""  88     o.`Y8b 88""   88"Yb    YbdP   88""   88"Yb
 88  Yb 888888 8bodP'   88       dP""""Yb 88     88     8bodP' 888888 88  Yb    YP    888888 88  Yb
 
-*/const server = app.listen(3000, () => {
-  const message = `
-    🚀 REST APIs Server ready at: http://localhost:3000
-    🫡  Web Socket Server ready at: http://localhost:8000
-    ⭐️ See sample requests: http://pris.ly/e/ts/rest-express#3-using-the-rest-api
-    `;
-  console.log(message);
-});
 
+
+*/
+
+//check if file exist
+
+require('dotenv').config()
+if (process.env.NODE_ENV === "production") {
+  https.createServer({
+    key: fs.readFileSync('/etc/letsencrypt/live/backend.pangolino.org/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/backend.pangolino.org/fullchain.pem'),
+    //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
+      
+  }, app).listen(4000, () => {
+    console.log('HTTPS server is running at localhost:' + 4000)
+  })
+} else if (process.env.NODE_ENV === "development") {
+
+  const server = app.listen(3000, () => {
+    const message = `
+      🚀 REST APIs Server ready at: http://localhost:3000
+      🫡  Web Socket Server ready at: http://localhost:8000
+      ⭐️ See sample requests: http://pris.ly/e/ts/rest-express#3-using-the-rest-api
+      `;
+    console.log(message);
+  });
+} else {
+  console.log("🚨 NODE_ENV is not set 🚨");
+  console.log("Please set NODE_ENV to either 'development' or 'production' in .env file\n\n" );
+  process.exit(1);
+}
 
 // Get response from the server's main page
 app.get("/", async (req, res) => {
@@ -98,6 +123,7 @@ app.get("/api/posts/searchPosts", searchPosts);
 app.get("/api/posts/getMyPosts", getMyPosts);
 
 import { getAllConversations, createConversation, getAllMessages, sendMessage, getTotalUnreadMessagesPerUser} from "./api/messages";
+import e from "express";
 app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
