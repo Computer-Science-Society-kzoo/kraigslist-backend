@@ -157,7 +157,7 @@ export const wsServer = new webSocketServer({
 const clients: any = {};
 
 wsServer.on('request', function (request: any) {
-
+  console.log('Connection from origin ' + request.origin + '.');
   //get bearer token from request
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
 
