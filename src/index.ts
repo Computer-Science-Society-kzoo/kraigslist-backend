@@ -138,8 +138,15 @@ Yb        dP 888888 88""Yb     .dP"Y8  dP"Yb   dP""b8 88  dP 888888 888888     .
   YbdPYbdP   88""   88""Yb     o.`Y8b Yb   dP Yb      88"Yb  88""     88       o.`Y8b 88""   88"Yb    YbdP   88""   88"Yb
    YP  YP    888888 88oodP     8bodP'  YbodP   YboodP 88  Yb 888888   88       8bodP' 888888 88  Yb    YP    888888 88  Yb
 */
-const webSocketOnlineServer = http.createServer();
-webSocketOnlineServer.listen(webSocketsServerPort);
+
+const webSocketOnlineServer = (process.env.NODE_ENV === "production") ? https.createServer(
+  {
+    key: fs.readFileSync('/etc/letsencrypt/live/bkl1.kzoocss.org/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/bkl1.kzoocss.org/fullchain.pem'),
+    //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
+  }) : http.createServer()
+
+webSocketOnlineServer.listen(4500);
 
 export const wsServer = new webSocketServer({
   httpServer: webSocketOnlineServer
