@@ -158,14 +158,17 @@ wsServer.on('request', function (request: any) {
 
   //get access_token
 
-  let token = request.httpRequest.headers.cookie?.split('access_token=')[1]?.split(";")[0];
+  let token = request.httpRequest.headers.cookie.split('=')[1]
   
+  
+  if (token == undefined) {
+    let token = request.httpRequest.url.split('=')[1]
+  }   
  
 
   if (token == undefined) {
     console.log("TOKEN: " + token);
     console.log("no token");
-    console.log(request)
     request.reject();
     return;
   }
