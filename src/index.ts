@@ -161,19 +161,16 @@ wsServer.on('request', function (request: any) {
   //get bearer token from request
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
 
-  //console.log(request.httpRequest.headers.cookie); 
-  let token = undefined
-  // let token = request.httpRequest.headers.authorization?.split(' ')[1];
-  // if (token == undefined) {
-  //   token = request.httpRequest.headers.cookie?.split('auth=')[1]?.split(";")[0];
-  // }
+  let token = request.httpRequest.headers.authorization?.split(' ')[1];
   if (token == undefined) {
-    token = JSON.stringify(request.httpRequest)
+    token = request.httpRequest.headers.cookie?.split('auth=')[1]?.split(";")[0];
+  }
+  if (token == undefined) {
     console.log("TOKEN: " + token);
-    return;
   }
   if (token == undefined) {
     console.log("no token");
+    request.reject();
     return;
   }
 
