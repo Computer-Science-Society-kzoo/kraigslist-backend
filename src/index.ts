@@ -73,7 +73,7 @@ if (process.env.NODE_ENV === "production") {
     //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
       
   }, app).listen(4000, () => {
-    console.log('      🚀 HTTPS REST APIs Server ready at:' + 4000)
+    console.log('      🚀 REST APIs Server ready at: https://bkl1.kzoocss.org (locally at port 4000)');
   })
 } else if (process.env.NODE_ENV === "development") {
 
