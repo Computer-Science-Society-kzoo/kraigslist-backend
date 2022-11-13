@@ -68,8 +68,8 @@ const http = require('http');
 require('dotenv').config()
 if (process.env.NODE_ENV === "production") {
   https.createServer({
-    key: fs.readFileSync('/etc/letsencrypt/live/backend.pangolino.org/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/backend.pangolino.org/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/bkl1.kzoocss.org/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/bkl1.kzoocss.org/fullchain.pem'),
     //passphrase: fs.readFileSync('certs/pass.pem', "utf8").toString().trim()
       
   }, app).listen(4000, () => {
