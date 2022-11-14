@@ -32,6 +32,7 @@ export const createConversation = async (req: any, res: any) => {
   let { postID, message } = req.body;
 
   if (!postID || !message || !Number.isInteger(postID)) {
+    console.log("Invalid request");
     return res
       .status(400)
       .send({ message: "Invalid postID OR missing message" });
@@ -41,6 +42,7 @@ export const createConversation = async (req: any, res: any) => {
   let userID = -1;
   try {
     if (token === undefined) {
+      console.log("No token provided");
       res.status(401).send("No token provided");
       return;
     }
@@ -48,6 +50,7 @@ export const createConversation = async (req: any, res: any) => {
     const account = await verifyTokenAndReturnAccount(token);
 
     if (account === undefined) {
+      console.log("Invalid token");
       res.status(401).send("Token is invalid");
       return;
     }

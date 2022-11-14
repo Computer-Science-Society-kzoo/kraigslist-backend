@@ -94,7 +94,7 @@ export const signup = async (req: { body: User }, res: any) => {
 
     console.log("Token generated: ", token);
     // Save the result
-    const result = { ...user, token };
+    const result = { token: token, id: user.id };
     // Send a success response
     res.status(200).json(result);
   } catch (error) {
@@ -153,7 +153,7 @@ export const login = async (req: { body: { email: string; password: string } }, 
           process.env.JWT_SECRET,
           { expiresIn: "12h" }
         );
-        const result = token;
+        const result = { token: token, id: user.id };
         res.status(200).json(result);
       } else {
         res.sendStatus(401);
