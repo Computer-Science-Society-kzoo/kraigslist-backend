@@ -30,15 +30,17 @@ import { userIsLoggedIn, verifyTokenAndReturnAccount } from "./auth";
 
 export const deleteAccount = async (req: any, res: any) => {
   //const token = req.headers["authorization"]?.slice(7);
-  const token = req.cookies.auth
+  //const token = req.cookies.auth
 
-  console.log(token);
-
-  let username = "";
+  const token = req.headers["authorization"]?.slice(7);
+  const conID = req.headers["conid"];
+  let username = ""
+  console.log("TOKEN TEST: ", token)
 
   try {
     if (token === undefined) {
       res.status(401).send("No token provided: " + token);
+      return
     }
     let account = await verifyTokenAndReturnAccount(token);
     if (account === undefined) {
@@ -51,13 +53,12 @@ export const deleteAccount = async (req: any, res: any) => {
     console.log(e);
     return;
   }
-
   try {
     const result = await prisma.users.delete({
       where: {
         username: username,
       },
-    });
+    });  
     res.status(200).json(result);
   } catch (error) {
     console.log("Unknown error:" + error);

@@ -260,7 +260,27 @@ export const searchPosts = async (req: any, res: any) => {
 //type GET
 // http://localhost:3000/api/posts/getPostsMaster
 export const getPostsMaster = async (req: any, res: any) => {
+  const token = req.headers["authorization"]?.slice(7);
+  const conID = req.headers["conid"];
+
+  console.log("TOKEN: ", token)
   try {
+    if (token === undefined) {
+      res.status(401).send("No token provided: " + token);
+      return
+    }
+    let account = await verifyTokenAndReturnAccount(token);
+    if (account === undefined) {
+      res.status(401).send("Token is invalid");
+    }
+
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+
+  try {
+
     let toSearch = req.query.text;
     //let filter = req.query.filter;
     let filter: string[] = req.query.filter;
@@ -629,7 +649,7 @@ export const getPostsMaster = async (req: any, res: any) => {
 };
 
 //Delete a single post in the database
-const deletePost = async (req: any, res:any) => {
+const deletePost = async (req: any, res: any) => {
   const token = req.headers["authorization"]?.slice(7);
   const conID = req.headers["conid"];
 
@@ -676,10 +696,10 @@ const deletePost = async (req: any, res:any) => {
       });
     }
 
-  console.log(username + "deleted a post");
-  res.status(200).send("Post deleted");
+    console.log(username + "deleted a post");
+    res.status(200).send("Post deleted");
   } catch (error) {
-    console.log("Unknown error:" + error); 
+    console.log("Unknown error:" + error);
     res.sendStatus(500);
     return;
   }
