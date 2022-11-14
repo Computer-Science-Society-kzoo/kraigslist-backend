@@ -68,9 +68,8 @@ export const deleteAccount = async (req: any, res: any) => {
 
 //get username based on token
 export const getUsername = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
+  const token = req.headers["authorization"]?.slice(7);
 
-  const token = req.cookies.auth
   console.log(token);
 
   let username = "";

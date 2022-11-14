@@ -196,13 +196,15 @@ export const getMyPosts = async (req: any, res: any) => {
   //get a token
   // If fields are missing, return an error
 
-  const token = req.cookies.auth
+  const token = req.headers["authorization"]?.slice(7);
+  const conID = req.headers["conid"];
 
   let username = ""
   console.log("TOKEN: ", token)
   try {
     if (token === undefined) {
       res.status(401).send("No token provided: " + token);
+      return
     }
     let account = await verifyTokenAndReturnAccount(token);
     if (account === undefined) {

@@ -107,7 +107,7 @@ app.post("/api/account/changePassword", changePassword);
 app.post("/api/account/changeFirstName", changeFirstName);
 app.post("/api/account/changeSurname", changeSurname);
 app.post("/api/account/changeYear", changeYear);
-app.get("/api/account/getUsername", getUsername);
+app.get("/api/account/getusername", getUsername);
 
 import { getUsers, getUser } from "./api/users";
 app.get("/users", getUsers);
@@ -117,9 +117,8 @@ import { getPosts, getMyPosts, createPost, searchPosts, getPostsMaster, myPosts 
 app.get("/api/posts", getPosts);
 app.get("/api/posts/master", getPostsMaster);
 app.post("/api/posts/makepost", createPost);
-app.get("/api/posts/YourPosts", getMyPosts);
 app.get("/api/posts/searchPosts", searchPosts);
-app.get("/api/posts/getMyPosts", getMyPosts);
+app.get("/api/posts/getmyposts", getMyPosts);
 
 import { getAllConversations, createConversation, getAllMessages, sendMessage, getTotalUnreadMessagesPerUser} from "./api/messages";
 import e from "express";
