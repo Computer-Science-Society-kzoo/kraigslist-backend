@@ -127,7 +127,7 @@ app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
 app.post("/api/messages/send", sendMessage);
-app.get("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
+app.post("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
 
 
 
@@ -162,10 +162,10 @@ wsServer.on('request', function (request: any) {
   let token = ""
 
   try {
-    token = request.httpRequest.headers.cookie.split('=')[1].split(';')[0]
+    token = request.httpRequest.url.split('=')[1]
   } catch (error) {
-    console.log("🚨 No token in coockie found 🚨")
-    token = request.httpRequest.url.split('=')[1].split(';')[0]
+    console.log("🚨 No token in url found 🚨")
+    token = request.httpRequest.headers.cookie.split('=')[1].split(';')[0]
   }
   
   if (token == undefined) {
