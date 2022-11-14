@@ -127,7 +127,7 @@ app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
 app.post("/api/messages/send", sendMessage);
-app.post("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
+app.get("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
 
 
 

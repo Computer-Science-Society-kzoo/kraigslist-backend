@@ -415,7 +415,6 @@ export const getTotalUnreadMessagesPerUser = async (req: any, res: any) => {
 
   const token = req.headers["authorization"]?.slice(7);
 
-
   let username = "";
   let userID = -1;
 
