@@ -162,10 +162,10 @@ wsServer.on('request', function (request: any) {
   let token = ""
 
   try {
-    token = request.httpRequest.headers.cookie.split('=')[1]
+    token = request.httpRequest.headers.cookie.split('=')[1].split('=')[0]
   } catch (error) {
     console.log("🚨 No token in coockie found 🚨")
-    token = request.httpRequest.url.split('=')[1]
+    token = request.httpRequest.url.split('=')[1].split('=')[0]
   }
   
   if (token == undefined) {

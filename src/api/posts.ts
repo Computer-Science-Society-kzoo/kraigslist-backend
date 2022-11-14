@@ -195,7 +195,6 @@ export const getMyPosts = async (req: any, res: any) => {
   console.log("TEST")
   //get a token
   // If fields are missing, return an error
-  const token2 = req.headers["authorization"]?.slice(7);
 
   const token = req.cookies.auth
 
