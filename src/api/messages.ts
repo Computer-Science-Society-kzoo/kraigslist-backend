@@ -93,8 +93,14 @@ export const createConversation = async (req: any, res: any) => {
       },
     });
 
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userID,
+      },
+    });
+
     // Send notification to the other user
-    sendNewMessageNotification(post.userID, newConvesation.conversationID, message);
+    sendNewMessageNotification(post.userID, user?.username || "Unknown user", newConvesation.conversationID, message);
   
     res.status(200).json({ "Succesfully send?": true, message });
 
@@ -176,7 +182,13 @@ export const sendMessage = async (req: any, res: any) => {
       },
     });
 
-    sendNewMessageNotification(receiver || 0, conversationID, message);
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userID,
+      },
+    });
+
+    sendNewMessageNotification(receiver || 0, user?.username || "Unknown user", conversationID, message);
   
 
     res.status(200).json({ "Succesfully send and updated?": true, message });
@@ -467,11 +479,12 @@ export const getTotalUnreadMessagesPerUser = async (req: any, res: any) => {
 }
 
 // Send a message to a user
-function sendNewMessageNotification(userID: number, conversationID: number , message: string) {
+function sendNewMessageNotification(userID: number, sender: string, conversationID: number , message: string) {
   try {
     wsServer.SendToUser(userID, {
       type: "newMessage",
       data: {
+        sender: sender,
         conversationID: conversationID,
         message: message,
       },
