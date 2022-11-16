@@ -108,9 +108,8 @@ export const getUsername = async (req: any, res: any) => {
 
 //change user name
 export const changeUsername = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
+  const token = req.headers["authorization"]?.slice(7);
 
-  const token = req.cookies.auth
   console.log(token);
 
   let username = "";
@@ -118,10 +117,12 @@ export const changeUsername = async (req: any, res: any) => {
   try {
     if (token === undefined) {
       res.status(401).send("No token provided: " + token);
+      return
     }
     let account = await verifyTokenAndReturnAccount(token);
     if (account === undefined) {
       res.status(401).send("Token is invalid");
+      return
     }
 
     username = account.username;
@@ -193,8 +194,7 @@ export const changePassword = async (req: any, res: any) => {
 
 //change user email
 export const changeEmail = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
-  const token = req.cookies.auth
+  const token = req.headers["authorization"]?.slice(7);
 
   console.log(token);
 
@@ -235,9 +235,8 @@ export const changeEmail = async (req: any, res: any) => {
 
 //change name
 export const changeFirstName = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
+  const token = req.headers["authorization"]?.slice(7);
 
-  const token = req.cookies.auth
   console.log(token);
 
   let username = "";
@@ -278,8 +277,7 @@ export const changeFirstName = async (req: any, res: any) => {
 
 //change surname
 export const changeSurname = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
-  const token = req.cookies.auth
+  const token = req.headers["authorization"]?.slice(7);
   console.log(token);
 
   let username = "";
@@ -319,8 +317,7 @@ export const changeSurname = async (req: any, res: any) => {
 
 //change year
 export const changeYear = async (req: any, res: any) => {
-  //const token = req.headers["authorization"]?.slice(7);
-  const token = req.cookies.auth
+  const token = req.headers["authorization"]?.slice(7);
   console.log(token);
 
   let username = "";
