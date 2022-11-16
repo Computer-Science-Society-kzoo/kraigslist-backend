@@ -121,7 +121,6 @@ app.get("/api/posts/searchPosts", searchPosts);
 app.get("/api/posts/getmyposts", getMyPosts);
 
 import { getAllConversations, createConversation, getAllMessages, sendMessage, getTotalUnreadMessagesPerUser} from "./api/messages";
-import e from "express";
 app.get("/api/messages/allconversations", getAllConversations);
 app.post("/api/messages/newconversation", createConversation);
 app.get("/api/messages/allmessages", getAllMessages);
@@ -151,6 +150,7 @@ export const wsServer = new webSocketServer({
 
 const clients: any = {};
 
+wsServer.on('error', (err:any) => console.log('uncaught ERROR: ', err));
 wsServer.on('request', function (request: any) {
   console.log('Connection from origin ' + request.origin + '.');
   //get bearer token from request
@@ -168,7 +168,9 @@ wsServer.on('request', function (request: any) {
   }
   
   if (token === undefined) {
-    token = request.httpRequest.headers.cookie.split('=')[1].split(';')[0]
+    try{
+      token = request.httpRequest.headers.cookie.split('=')[1].split(';')[0] || undefined
+    } catch (error) {}
   }
   
   if (token == undefined) {
