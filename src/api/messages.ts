@@ -275,7 +275,7 @@ export const getAllMessages = async (req: any, res: any) => {
   let username = "";
   let userID = -1;
 
-  if (!Number.isInteger(receiverID) || !Number.isInteger(postID) || !Number.isInteger(conversationID)) {
+  if (!Number.isInteger(receiverID) || !Number.isInteger(postID) || !Number.isInteger(conversationID) || receiverID <= 0 || postID <= 0 || conversationID <= 0) {
     console.log("Invalid receiverID: " + typeof(receiverID) + " " + receiverID + " postID: " + typeof(postID) + " " + postID + " conversationID: " + typeof(conversationID) + " " + conversationID);
     return res.status(400).send({ message: "Invalid receiverID or postID or conversationID" });
   }
