@@ -127,6 +127,10 @@ app.get("/api/messages/allmessages", getAllMessages);
 app.post("/api/messages/send", sendMessage);
 app.get("/api/messages/totalmessages", getTotalUnreadMessagesPerUser);
 
+import { aiAssistMessage, aiAssistPost } from "./api/openai";
+app.post("/api/openai/aiassistpost", aiAssistPost);
+app.post("/api/openai/aiassistmessage", aiAssistMessage);
+
 
 
 /*
