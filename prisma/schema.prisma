@@ -31,11 +31,11 @@ model messages {
 model posts {
   id             Int       @id @default(autoincrement())
   dt_created     DateTime? @default(now()) @db.Timestamp(0)
-  title          String    @db.VarChar(50)
+  title          String    @db.Text
   text           String    @db.Text
   username       String    @db.VarChar(50)
   type           String    @db.VarChar(50)
-  img            String?   @db.VarChar(50)
+  img            String?   @db.Text
   offer_deadline DateTime? @db.DateTime(0)
   userID         Int
   price          Int?
