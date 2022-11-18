@@ -33,7 +33,6 @@ export const deleteAccount = async (req: any, res: any) => {
   //const token = req.cookies.auth
 
   const token = req.headers["authorization"]?.slice(7);
-  const conID = req.headers["conid"];
   let username = ""
   console.log("TOKEN TEST: ", token)
 

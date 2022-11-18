@@ -100,7 +100,7 @@ app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 
 import { deleteAccount, changeUsername, changeEmail, changePassword, changeFirstName, changeSurname, changeYear, getUsername  } from "./api/account";
-app.post("/api/account/delete", deleteAccount);
+app.delete("/api/account/delete", deleteAccount);
 app.post("/api/account/changeUsername", changeUsername);
 app.post("/api/account/changeEmail", changeEmail);
 app.post("/api/account/changePassword", changePassword);
